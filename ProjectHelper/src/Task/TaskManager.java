@@ -40,7 +40,7 @@ public class TaskManager<E extends Task> {
 
 	@Override
 	public String toString() {
-		return "TaskManager : [" + listOfTasks + "]";
+		return "TaskManager : " + listOfTasks;
 	}
 	
 	

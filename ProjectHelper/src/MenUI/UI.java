@@ -16,6 +16,8 @@ import Task.TaskManager;
 import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
@@ -27,7 +29,7 @@ import javax.swing.JRadioButton;
 
 public class UI{
 
-	private  JFrame frame;
+	private  JFrame frame = new JFrame();
 	private JTextField textNPCName;
 	private TaskManager<Task> manager = BotMain.Main.manager;
 	public static JTextPane textLog = new JTextPane();
@@ -43,7 +45,8 @@ public class UI{
 			public void run() {
 				try {
 					UI window = new UI();
-					window.frame.setVisible(true);
+					setFrame(window.frame);
+					window.getFrame().setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -62,9 +65,8 @@ public class UI{
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
 		frame.setBounds(100, 100, 457, 456);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
@@ -188,17 +190,33 @@ public class UI{
 				}
 			}
 		});
+		
+		getFrame().addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				kill();
+				ScriptManager.getScriptManager().stop();
+			}
+		});
 	}
 	
 	//////////////////////////////////
 
 	public void kill() {
 		MethodProvider.log("Killing");
-		frame.dispose();
+		getFrame().dispose();
 	}
 	
 	public void deselectRDBTN() {
 		rdbtnAttachAttack.setSelected(false);
+	}
+
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	public void setFrame(JFrame frame) {
+		this.frame = frame;
 	}
 	
 }
