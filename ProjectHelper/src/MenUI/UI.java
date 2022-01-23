@@ -1,7 +1,5 @@
 package MenUI;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 
@@ -28,32 +26,24 @@ import java.awt.Font;
 import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 
+
 public class UI{
 
 	private  JFrame frame = new JFrame();
 
 
 	private JTextField textNPCName;
-	private TaskManager<Task> manager = BotMain.Main.manager;
+	private TaskManager<Task> taskManager = BotMain.Main.taskManager;
 	public static JTextPane textLog = new JTextPane();
 	private JRadioButton rdbtnAttachAttack;
+	private JRadioButton rdbtnAttachDeforester;
+
+	private JTextField textTreeName;
 
 	/**
 	 * Launch the application.
 	 */
 	
-	
-	public void main() {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					new UI(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the application.
@@ -112,10 +102,8 @@ public class UI{
 		
 		comboFatigueSelector.setBounds(10, 169, 98, 22);
 		panel.add(comboFatigueSelector);
-		
-		
-		
-		
+			
+				
 		//ATTACK PANEL
 		
 		JPanel panel_1 = new JPanel();
@@ -136,25 +124,65 @@ public class UI{
 		rdbtnAttachAttack.setBounds(227, 26, 152, 23);
 		panel_1.add(rdbtnAttachAttack);
 		
-		JButton btnPause = new JButton("Pause");
-		btnPause.setBounds(31, 369, 98, 37);
-		getFrame().getContentPane().add(btnPause);
-		btnPause.setEnabled(true);
-		btnPause.setForeground(Color.BLACK);
-		btnPause.setBackground(Color.CYAN);
-		
-		//SET BUTTON
-		
-		JButton btnSet = new JButton("Set");
-		btnSet.setBounds(245, 369, 98, 37);
-		getFrame().getContentPane().add(btnSet);
-		btnSet.addActionListener(new ActionListener() {
+		rdbtnAttachAttack.addActionListener(new ActionListener() {
+
+			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				if(rdbtnAttachAttack.isSelected()) {
+					taskManager.add(new BotDataJPX.Attack(textNPCName.getText().trim())); 
+				}
 			}
 		});
-		btnSet.setForeground(Color.BLACK);
-		btnSet.setBackground(Color.CYAN);
+		//////////////////////////////////////////////////////////
+		
+		//DEFORESTER PANEL
+		
+		JPanel panel_2 = new JPanel();
+		tabbedPane.addTab("Deforester", null, panel_2, null);
+		panel_2.setLayout(null);
+		
+		textTreeName = new JTextField();
+		textTreeName.setBounds(26, 28, 86, 20);
+		panel_2.add(textTreeName);
+		textTreeName.setColumns(10);
+		
+		rdbtnAttachDeforester = new JRadioButton("Attach Task {DEFORESTER}");
+		rdbtnAttachDeforester.setBounds(311, 27, 161, 23);
+		panel_2.add(rdbtnAttachDeforester);
+		
+		rdbtnAttachDeforester.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(rdbtnAttachDeforester.isSelected()) {
+					taskManager.add(new BotDataJPX.Deforester(textTreeName.getText().trim())); 
+				}
+			}
+			
+		});
+		
+		JLabel lblNewLabel_1 = new JLabel("Tree Name");
+		lblNewLabel_1.setBounds(122, 28, 74, 20);
+		panel_2.add(lblNewLabel_1);
+		
+		
+		///////////////////////////////////////////////////////////
+		
+		JButton btnPause = new JButton("Pause");
+
+		//RESET BUTTON
+		
+		JButton btnReset = new JButton("Reset");
+		btnReset.setBounds(204, 369, 98, 37);
+		getFrame().getContentPane().add(btnReset);
+		btnReset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				taskManager.clear();
+				deselectRDBTN();
+			}
+		});
+		btnReset.setForeground(Color.BLACK);
+		btnReset.setBackground(Color.CYAN);
 		
 		//////////////////////////////
 		
@@ -172,35 +200,28 @@ public class UI{
 				FatigueManager.getInstance().setFatigueState((FatigueStates) comboFatigueSelector.getSelectedItem());
 				ScriptManager.getScriptManager().resume();
 				btnPause.setEnabled(true);
-				btnUpdate.setEnabled(false);	
+				btnUpdate.setEnabled(false);
 			}
 			
 		});
 		
 		/////////////////////////////////////////////////
 		
-		//PAUSE BUTTON
+	//PAUSE BUTTON
+		
+		btnPause.setBounds(31, 369, 98, 37);
+		getFrame().getContentPane().add(btnPause);
+		btnPause.setEnabled(true);
+		btnPause.setForeground(Color.BLACK);
+		btnPause.setBackground(Color.CYAN);
 			
 		btnPause.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 					ScriptManager.getScriptManager().pause();
-					manager.clear();
-					deselectRDBTN();
 					btnUpdate.setEnabled(true);
 					btnPause.setEnabled(false);
 			}		
-		});
-		rdbtnAttachAttack.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(rdbtnAttachAttack.isSelected()
-						&& textNPCName != null) {
-					
-					manager.add(new BotDataJPX.Attack(textNPCName.getText().trim())); 
-				}
-			}
 		});
 		
 		getFrame().addWindowListener(new WindowAdapter() {
@@ -219,8 +240,16 @@ public class UI{
 		getFrame().dispose();
 	}
 	
+	public void updateLog() {
+		textLog.setText("");
+		textLog.setText(taskManager.toString());
+		textLog.setText(textLog.getText() + "\n" + FatigueManager.getInstance().getEnergy());
+		textLog.setText(textLog.getText() + "\n" + FatigueManager.getInstance().getFatigueState());
+	}
+	
 	public void deselectRDBTN() {
 		rdbtnAttachAttack.setSelected(false);
+		rdbtnAttachDeforester.setSelected(false);
 	}
 	public JFrame getFrame() {
 		return frame;
@@ -229,7 +258,6 @@ public class UI{
 	public void setFrame(JFrame frame) {
 		this.frame = frame;
 	}
-
 }
 
 

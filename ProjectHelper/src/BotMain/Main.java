@@ -1,5 +1,7 @@
 package BotMain;
 
+import java.awt.EventQueue;
+
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
@@ -14,22 +16,28 @@ import Task.TaskManager;
 @ScriptManifest(author = "JPX", category = Category.UTILITY, name = "ProjectHelper", version = 0.1)
 public class Main extends AbstractScript{
 	private UI gui = new UI();
-	public static TaskManager<Task> manager = new TaskManager<>();
+	public static TaskManager<Task> taskManager = new TaskManager<>();
 	int i = 6969;
 	
 	@Override
 	public void onStart() {
 		MethodProvider.log("Loading gui");
-		gui.main();
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					gui = new UI(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	@Override
 	public int onLoop() {
-		UI.textLog.setText(manager.toString());
-		FatigueManager.getInstance().checkEnergy();
-		UI.textLog.setText(UI.textLog.getText() + "\n" + FatigueManager.getInstance().getEnergy());
-		UI.textLog.setText(UI.textLog.getText() + "\n" + FatigueManager.getInstance().getFatigueState().getFatigueState());
-		manager.getNext();
+		FatigueManager.getInstance().checkEnergy(); //TODO FIND new location for this
+		taskManager.getNext();
+		gui.updateLog();
 		this.i = FatigueManager.getInstance().nextInt();
 		return this.i;
 	}
@@ -37,7 +45,7 @@ public class Main extends AbstractScript{
 
 	@Override
 	public void onExit() {
-		manager.clear();
+		taskManager.clear();
 		gui.kill();
 	}
 	

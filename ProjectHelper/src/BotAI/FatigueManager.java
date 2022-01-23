@@ -7,10 +7,10 @@ public class FatigueManager {
 	private static FatigueManager fm = null;
 	
 	FatigueStates fatigueState;
-	private static final int  ENERGY_LEVEL_ONE = 70;
-	private static final int  ENERGY_LEVEL_TWO = 40;
+	private static final int  ENERGY_LEVEL_RELAXED = 70;
+	private static final int  ENERGY_LEVEL_TIRED = 40;
 	private double energy = 100.00;
-	Random dom = new Random();
+	private Random dom = new Random();
 	
 	 
 	private FatigueManager(FatigueStates fatigue) {
@@ -33,16 +33,14 @@ public class FatigueManager {
 	}
 	
 	public void checkEnergy() {
-		if(getEnergy() <= ENERGY_LEVEL_ONE && !fatigueState.isFatigueState(FatigueStates.RELAXED)) {
+		if(getEnergy() <= ENERGY_LEVEL_RELAXED && !fatigueState.isFatigueState(FatigueStates.RELAXED)) {
 			setFatigueState(FatigueStates.RELAXED);
 		}
-		if(getEnergy() <= ENERGY_LEVEL_TWO && !fatigueState.isFatigueState(FatigueStates.TIRED)) {
+		if(getEnergy() <= ENERGY_LEVEL_TIRED && !fatigueState.isFatigueState(FatigueStates.TIRED)) {
 			setFatigueState(FatigueStates.TIRED);
 		}
-		
 	}
-	
-	
+
 	private int generateRandomInt(int offset) {
 		return (int) (Math.random() * offset);
 	}

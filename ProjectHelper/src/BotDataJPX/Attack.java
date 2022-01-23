@@ -44,8 +44,7 @@ public class Attack implements Task {
         	MethodProvider.sleep(50);
         	if(Players.localPlayer().isAnimating() || Players.localPlayer().isInCombat())
         		return false;
-        }
-              
+        }      
         return true;
     }
     

@@ -3,6 +3,7 @@ package Task;
 import java.util.LinkedList;
 import java.util.Queue;
 
+
 //TODO Flesh this out
 
 public class TaskManager<E extends Task> {
@@ -30,6 +31,16 @@ public class TaskManager<E extends Task> {
 			temp = listOfTasks.peek();
 			listOfTasks.poll().execute();
 			listOfTasks.add(temp);
+		}
+		return false;
+	}
+	
+	public boolean getNextUntil() {
+		Task temp;
+		if(listOfTasks.peek() != null) {
+			temp = listOfTasks.peek();
+			if(listOfTasks.poll().execute())
+				listOfTasks.add(temp);
 		}
 		return false;
 	}
