@@ -7,7 +7,6 @@ import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.NPCs;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.wrappers.interactive.NPC;
-
 import Task.Task;
 
 public class Attack implements Task {
@@ -21,6 +20,12 @@ public class Attack implements Task {
         npcName = name;
     }
     
+
+	@Override
+	public double fatigueRate() {
+		return .08;
+	}
+    
     @Override
     public boolean execute() {
         if(shouldAttack()) {
@@ -33,30 +38,28 @@ public class Attack implements Task {
         if(Dialogues.canContinue()) {
             Dialogues.continueDialogue();
         }
+        MethodProvider.sleep(50);
         
-        if(Players.localPlayer().isInCombat()) {
+        if(Players.localPlayer().isAnimating() || Players.localPlayer().isInCombat()) {
         	MethodProvider.sleep(50);
-        	if(Players.localPlayer().isInCombat())
+        	if(Players.localPlayer().isAnimating() || Players.localPlayer().isInCombat())
         		return false;
         }
-        
-        if(Players.localPlayer().isMoving()) {
-            return false;
-        }        
+              
         return true;
     }
     
     private boolean attack() {
-        setNpc(npc);
+        setNPC(npc);
         MethodProvider.sleep(50);
 
         if(getNPC() != null
                 && !getNPC().isInCombat()
                 && getNPC().canReach())
         {
-            getNPC().interact("Attack");
-            MethodProvider.sleep(50);
+            MethodProvider.sleepUntil(() -> getNPC().interact("Attack"), 1000);
             MethodProvider.sleepWhile(() -> Players.localPlayer().isAnimating(), 3000);
+            fm.consumeEnergy(fatigueRate());
             return true;
         }
         return false;
@@ -74,12 +77,12 @@ public class Attack implements Task {
         return npc;
     }
 
-    public void setNpc(NPC npc) {
+    public void setNPC(NPC npc) {
         npc = NPCs.closest(n ->
             n.getName().equals(this.npcName) 
             && n != null 
             && !n.isInCombat());
-        MethodProvider.sleep(25);
+        MethodProvider.sleep(50);
         this.npc = npc;
     }
 
@@ -104,4 +107,5 @@ public class Attack implements Task {
 		Attack other = (Attack) obj;
 		return Objects.equals(npcName, other.npcName);
 	}
+
 }

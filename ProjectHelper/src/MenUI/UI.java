@@ -9,7 +9,8 @@ import javax.swing.JTextField;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.script.ScriptManager;
 
-
+import BotAI.FatigueManager;
+import BotAI.FatigueStates;
 import Task.Task;
 import Task.TaskManager;
 
@@ -22,31 +23,31 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
-import javax.swing.JScrollBar;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JRadioButton;
+import javax.swing.JComboBox;
 
 public class UI{
 
 	private  JFrame frame = new JFrame();
+
+
 	private JTextField textNPCName;
 	private TaskManager<Task> manager = BotMain.Main.manager;
 	public static JTextPane textLog = new JTextPane();
-	public JTextField textFatigueOffset;
 	private JRadioButton rdbtnAttachAttack;
 
 	/**
 	 * Launch the application.
 	 */
 	
-	public void main(String[] args) {
+	
+	public void main() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					UI window = new UI();
-					setFrame(window.frame);
-					window.getFrame().setVisible(true);
+					new UI(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -57,26 +58,34 @@ public class UI{
 	/**
 	 * Create the application.
 	 */
-	public UI() {
+	
+	public UI() { }
+	
+	/**
+	 * @wbp.parser.constructor
+	 */
+	public UI(boolean accept) { 
 		initialize();
 	}
+	
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame.setBounds(100, 100, 457, 456);
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		setFrame(this.frame);
+		getFrame().setVisible(true);
+		getFrame().setBounds(100, 100, 535, 456);
+		getFrame().setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		getFrame().getContentPane().setLayout(null);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(10, 11, 421, 296);
-		frame.getContentPane().add(tabbedPane);
+		tabbedPane.setBounds(10, 11, 499, 296);
+		getFrame().getContentPane().add(tabbedPane);
 		
 		JPanel panel = new JPanel();
 		tabbedPane.addTab("Main Tab", null, panel, null);
 		panel.setLayout(null);
-		textLog.setOpaque(false);
 		textLog.setEditable(false);
 		
 		//////////////////////////////////
@@ -84,28 +93,30 @@ public class UI{
 		
 		/////////////////////////////////
 		
-		//LOG MENUU
+		//MAIN PANEL
 		
-		textLog.setBounds(10, 11, 360, 115);
+		textLog.setBounds(10, 11, 474, 147);
 		panel.add(textLog);
 		
-		JScrollBar scrollBar = new JScrollBar();
-		scrollBar.setBounds(377, 11, 29, 115);
-		panel.add(scrollBar);
-		
-		textFatigueOffset = new JTextField("5000");
-		textFatigueOffset.setBounds(10, 164, 47, 20);
-		panel.add(textFatigueOffset);
-		textFatigueOffset.setColumns(10);
-		
-		JLabel lblNewLabel = new JLabel("Fatigue Offset (INT)");
-		lblNewLabel.setBounds(67, 164, 106, 20);
+		JLabel lblNewLabel = new JLabel("Fatigue Level");
+		lblNewLabel.setBounds(118, 170, 71, 20);
 		panel.add(lblNewLabel);
 		
+		JComboBox<FatigueStates> comboFatigueSelector = new JComboBox<>();
+		comboFatigueSelector.setEditable(false);
+		
+		comboFatigueSelector.addItem(FatigueStates.DEFAULT);
+		comboFatigueSelector.addItem(FatigueStates.ENGAGED);
+		comboFatigueSelector.addItem(FatigueStates.RELAXED);
+		comboFatigueSelector.addItem(FatigueStates.TIRED);
+		
+		comboFatigueSelector.setBounds(10, 169, 98, 22);
+		panel.add(comboFatigueSelector);
 		
 		
 		
-		//ATTACK TAB
+		
+		//ATTACK PANEL
 		
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("Attack", null, panel_1, null);
@@ -127,7 +138,7 @@ public class UI{
 		
 		JButton btnPause = new JButton("Pause");
 		btnPause.setBounds(31, 369, 98, 37);
-		frame.getContentPane().add(btnPause);
+		getFrame().getContentPane().add(btnPause);
 		btnPause.setEnabled(true);
 		btnPause.setForeground(Color.BLACK);
 		btnPause.setBackground(Color.CYAN);
@@ -135,8 +146,8 @@ public class UI{
 		//SET BUTTON
 		
 		JButton btnSet = new JButton("Set");
-		btnSet.setBounds(174, 369, 98, 37);
-		frame.getContentPane().add(btnSet);
+		btnSet.setBounds(245, 369, 98, 37);
+		getFrame().getContentPane().add(btnSet);
 		btnSet.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -149,15 +160,16 @@ public class UI{
 		
 		//UPDATE BUTTON
 		
-		JButton btnUpdate = new JButton("Update");
-		btnUpdate.setBounds(302, 369, 98, 37);
-		frame.getContentPane().add(btnUpdate);
+		JButton btnUpdate = new JButton("Update and Resume");
+		btnUpdate.setBounds(364, 369, 145, 37);
+		getFrame().getContentPane().add(btnUpdate);
 		btnUpdate.setEnabled(false);
 		btnUpdate.setBackground(Color.CYAN);
 		btnUpdate.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				FatigueManager.getInstance().setFatigueState((FatigueStates) comboFatigueSelector.getSelectedItem());
 				ScriptManager.getScriptManager().resume();
 				btnPause.setEnabled(true);
 				btnUpdate.setEnabled(false);	
@@ -186,7 +198,7 @@ public class UI{
 				if(rdbtnAttachAttack.isSelected()
 						&& textNPCName != null) {
 					
-					manager.add(new BotDataJPX.Attack(textNPCName.getText())); 
+					manager.add(new BotDataJPX.Attack(textNPCName.getText().trim())); 
 				}
 			}
 		});
@@ -194,7 +206,7 @@ public class UI{
 		getFrame().addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				kill();
+				getFrame().dispose();
 				ScriptManager.getScriptManager().stop();
 			}
 		});
@@ -210,7 +222,6 @@ public class UI{
 	public void deselectRDBTN() {
 		rdbtnAttachAttack.setSelected(false);
 	}
-
 	public JFrame getFrame() {
 		return frame;
 	}
@@ -218,7 +229,7 @@ public class UI{
 	public void setFrame(JFrame frame) {
 		this.frame = frame;
 	}
-	
+
 }
 
 
