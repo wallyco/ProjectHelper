@@ -25,21 +25,15 @@ public class Walk implements Task {
 		this.area = area;
 	}
 	
-
+	//TODO Prone to errors	
 	@Override
 	public boolean execute() {
-		if(area != null
-				&& !area.contains(Players.localPlayer())) {
+		if(area != null && !area.contains(Players.localPlayer())){
 			Walking.walk(area);
 			return true;
-//			}else {
-//				if(Walking.walkOnScreen(Players.localPlayer().getTile().getArea(5).getRandomTile()) 
-//						&& error == 0)
-//					error++;
-//					return true;
-		}else
-			return false;
-		
+		}
+
+		return false;
 	}
 
 	@Override

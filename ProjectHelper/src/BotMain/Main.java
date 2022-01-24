@@ -1,6 +1,8 @@
 package BotMain;
 
 import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.util.concurrent.TimeUnit;
 
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.script.AbstractScript;
@@ -16,12 +18,13 @@ import MenUI.UI;
 public class Main extends AbstractScript{
 	private UI gui = new UI();
 	public static AI ai = new AI();
-
 	private boolean firstrun = true;
 	private int i = 6969;
 	
 	@Override
 	public void onStart() {
+		timeBegan = System.currentTimeMillis();	
+
 		MethodProvider.log("Loading gui");
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -32,6 +35,7 @@ public class Main extends AbstractScript{
 				}
 			}
 		});
+		
 	}
 
 	@Override
@@ -39,7 +43,6 @@ public class Main extends AbstractScript{
 		if(firstrun) {
 			ScriptManager.getScriptManager().pause();
 			firstrun = false;
-			FatigueManager.getInstance().setEnergy(1);
 		}
 
 		ai.act();
@@ -55,9 +58,35 @@ public class Main extends AbstractScript{
 		ai.getTaskManager().clear();
 		gui.kill();
 	}
+	
+	//TODO MAKE YOUR OWN
+	private long timeBegan;
+	private long timeRan;
+	
+	
+	public void onPaint(Graphics g) {
+	    timeRan = System.currentTimeMillis() - this.timeBegan;
+	    g.drawString(ft(timeRan), 1,256);
+    }
+	private String ft(long duration) {
 
-	public AI getAi() {
-		return ai;
+		String res = "";
+	
+		long days = TimeUnit.MILLISECONDS.toDays(duration);
+	
+		long hours = TimeUnit.MILLISECONDS.toHours(duration) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(duration));
+	
+		long minutes = TimeUnit.MILLISECONDS.toMinutes(duration) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(duration));
+	
+		long seconds = TimeUnit.MILLISECONDS.toSeconds(duration)- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration));
+	
+		if (days == 0) {
+			res = ("Total run time: " + hours + ":" + minutes + ":" + seconds);
+		} else {
+			res = ("Total run time: " + days + ":" + hours + ":" + minutes + ":" + seconds);
+		}
+		
+	return res;
 	}
 	
 }

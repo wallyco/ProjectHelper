@@ -1,7 +1,10 @@
 import BotAI.FatigueManager;
+import BotAI.HealthManager;
 
 public class Test {
 	public static void main(String[] args) {
-		System.out.print(FatigueManager.getInstance().generateResetBreakDouble());
+		for(int i = 0; i < 50; i++) {
+			
+		}
 	}
 }

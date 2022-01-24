@@ -78,9 +78,9 @@ public class UI{
 		tabbedPane.setBounds(10, 11, 499, 296);
 		getFrame().getContentPane().add(tabbedPane);
 		
-		JPanel panel = new JPanel();
-		tabbedPane.addTab("Main Tab", null, panel, null);
-		panel.setLayout(null);
+		JPanel panelMain = new JPanel();
+		tabbedPane.addTab("Main Tab", null, panelMain, null);
+		panelMain.setLayout(null);
 		textLog.setEditable(false);
 		
 		//////////////////////////////////
@@ -90,12 +90,12 @@ public class UI{
 		
 		//MAIN PANEL
 		
-		textLog.setBounds(10, 11, 474, 147);
-		panel.add(textLog);
+		textLog.setBounds(10, 11, 474, 198);
+		panelMain.add(textLog);
 		
 		JLabel lblNewLabel = new JLabel("Fatigue Level");
-		lblNewLabel.setBounds(118, 170, 71, 20);
-		panel.add(lblNewLabel);
+		lblNewLabel.setBounds(118, 236, 71, 20);
+		panelMain.add(lblNewLabel);
 		
 		JComboBox<FatigueStates> comboFatigueSelector = new JComboBox<>();
 		comboFatigueSelector.setEditable(false);
@@ -105,24 +105,88 @@ public class UI{
 		comboFatigueSelector.addItem(FatigueStates.RELAXED);
 		comboFatigueSelector.addItem(FatigueStates.TIRED);
 		
-		comboFatigueSelector.setBounds(10, 169, 98, 22);
-		panel.add(comboFatigueSelector);
+		comboFatigueSelector.setBounds(10, 235, 98, 22);
+		panelMain.add(comboFatigueSelector);
+		
+			
+		//ATTACK PANEL
+		
+		JPanel panelAttack = new JPanel();
+		tabbedPane.addTab("Attack", null, panelAttack, null);
+		panelAttack.setLayout(null);
+		
+		textNPCName = new JTextField();
+		textNPCName.setBounds(10, 27, 114, 20);
+		panelAttack.add(textNPCName);
+		textNPCName.setColumns(10);
+		
+		JLabel lblNPCName = new JLabel("NPC Name");
+		lblNPCName.setFont(new Font("Segoe UI Historic", Font.PLAIN, 15));
+		lblNPCName.setBounds(134, 30, 87, 14);
+		panelAttack.add(lblNPCName);
+		
+		rdbtnAttachAttack = new JRadioButton("Attach Task {ATTACK}");
+		rdbtnAttachAttack.setBounds(227, 26, 152, 23);
+		panelAttack.add(rdbtnAttachAttack);
+		
+		textSetAttackLevel = new JTextField();
+		textSetAttackLevel.setText("0");
+		textSetAttackLevel.setBounds(10, 58, 45, 20);
+		panelAttack.add(textSetAttackLevel);
+		textSetAttackLevel.setColumns(10);
+		
+		textSetStrengthLevel = new JTextField();
+		textSetStrengthLevel.setText("0");
+		textSetStrengthLevel.setBounds(10, 89, 45, 20);
+		panelAttack.add(textSetStrengthLevel);
+		textSetStrengthLevel.setColumns(10);
+		
+		textSetDefenceLevel = new JTextField();
+		textSetDefenceLevel.setText("0");
+		textSetDefenceLevel.setBounds(10, 120, 45, 20);
+		panelAttack.add(textSetDefenceLevel);
+		textSetDefenceLevel.setColumns(10);
+		
+		JLabel lblNewLabel_2 = new JLabel("Train Attack (Level)");
+		lblNewLabel_2.setBounds(65, 61, 102, 14);
+		panelAttack.add(lblNewLabel_2);
+		
+		JLabel lblNewLabel_3 = new JLabel("Train Strength (Level)");
+		lblNewLabel_3.setBounds(65, 92, 114, 14);
+		panelAttack.add(lblNewLabel_3);
+		
+		JLabel lblNewLabel_4 = new JLabel("Train Defence (Level)");
+		lblNewLabel_4.setBounds(65, 123, 114, 14);
+		panelAttack.add(lblNewLabel_4);
+		
+		rdbtnAttachAttack.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(rdbtnAttachAttack.isSelected()) {
+					taskManager.add(new BotDataJPX.Attack(textNPCName.getText().trim())); 
+					levelManager.setLevelAttackTo(Integer.parseInt(textSetAttackLevel.getText().trim()));
+					levelManager.setLevelStrengthTo(Integer.parseInt(textSetStrengthLevel.getText().trim()));
+					levelManager.setLevelDefenceTo(Integer.parseInt(textSetDefenceLevel.getText().trim()));
+				}
+			}
+		});
 		//////////////////////////////////////////////////////////
 		
 		//DEFORESTER PANEL
 		
-		JPanel panel_2 = new JPanel();
-		tabbedPane.addTab("Deforester", null, panel_2, null);
-		panel_2.setLayout(null);
+		JPanel panelDeforester = new JPanel();
+		tabbedPane.addTab("Deforester", null, panelDeforester, null);
+		panelDeforester.setLayout(null);
 		
 		textTreeName = new JTextField();
 		textTreeName.setBounds(26, 28, 86, 20);
-		panel_2.add(textTreeName);
+		panelDeforester.add(textTreeName);
 		textTreeName.setColumns(10);
 		
 		rdbtnAttachDeforester = new JRadioButton("Attach Task {DEFORESTER}");
 		rdbtnAttachDeforester.setBounds(311, 27, 161, 23);
-		panel_2.add(rdbtnAttachDeforester);
+		panelDeforester.add(rdbtnAttachDeforester);
 		
 		rdbtnAttachDeforester.addActionListener(new ActionListener() {
 
@@ -137,71 +201,10 @@ public class UI{
 		
 		JLabel lblNewLabel_1 = new JLabel("Tree Name");
 		lblNewLabel_1.setBounds(122, 28, 74, 20);
-		panel_2.add(lblNewLabel_1);
+		panelDeforester.add(lblNewLabel_1);
 		
-			
-		//ATTACK PANEL
-		
-		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("Attack", null, panel_1, null);
-		panel_1.setLayout(null);
-		
-		textNPCName = new JTextField();
-		textNPCName.setBounds(10, 27, 114, 20);
-		panel_1.add(textNPCName);
-		textNPCName.setColumns(10);
-		
-		JLabel lblNPCName = new JLabel("NPC Name");
-		lblNPCName.setFont(new Font("Segoe UI Historic", Font.PLAIN, 15));
-		lblNPCName.setBounds(134, 30, 87, 14);
-		panel_1.add(lblNPCName);
-		
-		rdbtnAttachAttack = new JRadioButton("Attach Task {ATTACK}");
-		rdbtnAttachAttack.setBounds(227, 26, 152, 23);
-		panel_1.add(rdbtnAttachAttack);
-		
-		textSetAttackLevel = new JTextField();
-		textSetAttackLevel.setText("0");
-		textSetAttackLevel.setBounds(10, 58, 45, 20);
-		panel_1.add(textSetAttackLevel);
-		textSetAttackLevel.setColumns(10);
-		
-		textSetStrengthLevel = new JTextField();
-		textSetStrengthLevel.setText("0");
-		textSetStrengthLevel.setBounds(10, 89, 45, 20);
-		panel_1.add(textSetStrengthLevel);
-		textSetStrengthLevel.setColumns(10);
-		
-		textSetDefenceLevel = new JTextField();
-		textSetDefenceLevel.setText("0");
-		textSetDefenceLevel.setBounds(10, 120, 45, 20);
-		panel_1.add(textSetDefenceLevel);
-		textSetDefenceLevel.setColumns(10);
-		
-		JLabel lblNewLabel_2 = new JLabel("Train Attack (Level)");
-		lblNewLabel_2.setBounds(65, 61, 102, 14);
-		panel_1.add(lblNewLabel_2);
-		
-		JLabel lblNewLabel_3 = new JLabel("Train Strength (Level)");
-		lblNewLabel_3.setBounds(65, 92, 114, 14);
-		panel_1.add(lblNewLabel_3);
-		
-		JLabel lblNewLabel_4 = new JLabel("Train Defence (Level)");
-		lblNewLabel_4.setBounds(65, 123, 114, 14);
-		panel_1.add(lblNewLabel_4);
-		
-		rdbtnAttachAttack.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(rdbtnAttachAttack.isSelected()) {
-					taskManager.add(new BotDataJPX.Attack(textNPCName.getText().trim())); 
-					levelManager.setLevelAttackTo(Integer.parseInt(textSetAttackLevel.getText().trim()));
-					levelManager.setLevelStrengthTo(Integer.parseInt(textSetStrengthLevel.getText().trim()));
-					levelManager.setLevelDefenceTo(Integer.parseInt(textSetDefenceLevel.getText().trim()));
-				}
-			}
-		});
+		JPanel panelDev = new JPanel();
+		tabbedPane.addTab("Dev Tab", null, panelDev, null);
 		
 		
 		///////////////////////////////////////////////////////////
@@ -286,6 +289,9 @@ public class UI{
 		textLog.setText(taskManager.toString() + taskManager.size());
 		textLog.setText(textLog.getText() + "\n" + FatigueManager.getInstance().getEnergy());
 		textLog.setText(textLog.getText() + "\n" + FatigueManager.getInstance().getFatigueState());
+		textLog.setText(textLog.getText() + "\n" + FatigueManager.getENERGY_LEVEL_RELAXED());
+		textLog.setText(textLog.getText() + "\n" + FatigueManager.getENERGY_LEVEL_TIRED());
+
 		textLog.setText(textLog.getText() + "\n" + levelManager);
 	}
 	
