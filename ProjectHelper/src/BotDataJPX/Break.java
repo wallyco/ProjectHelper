@@ -19,14 +19,12 @@ public class Break implements Task {
 		startTimer(runtime);
 		this.addedEnergy = add;
 		ScriptManager.getScriptManager().getCurrentScript().getRandomManager().disableSolver(RandomEvent.LOGIN);
-		FatigueManager.getInstance().acceptBreak = false;
 	}
 
 	@Override
 	public boolean execute() {
 		if(!stopwatch.finished())
 			return true;
-		FatigueManager.getInstance().acceptBreak = true;
 		FatigueManager.getInstance().rechargeEnergy(addedEnergy);
 		ScriptManager.getScriptManager().getCurrentScript().getRandomManager().enableSolver(RandomEvent.LOGIN);
 		return false;

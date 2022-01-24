@@ -42,7 +42,7 @@ public class TaskManager<E extends Task> {
 		listOfTasks.clear();
 	}
 	
-	public void clearAddSave(Task task) {
+	public void insertAtHead(Task task) {
 		if(!listOfTasks.contains(task)) {
 			for(Task t : listOfTasks) {
 				copy.add(t);

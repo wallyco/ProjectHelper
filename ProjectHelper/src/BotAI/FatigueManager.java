@@ -2,8 +2,6 @@ package BotAI;
 
 import java.util.Random;
 
-import BotMain.Main;
-
 public class FatigueManager { 
 	
 	private static FatigueManager fm = null;
@@ -67,9 +65,6 @@ public class FatigueManager {
 	public void checkEnergyLevel() {
 		if(getEnergy() <= ENERGY_LEVEL_RELAXED && !fatigueState.isFatigueState(FatigueStates.RELAXED)) {
 			setFatigueState(FatigueStates.RELAXED);
-			if(ENERGY_LEVEL_RELAXED % 2 == 0 && acceptBreak) {
-				Main.ai.getTaskManager().clearAddSave(new BotDataJPX.Break(((long) generateBreakDouble()), this.shortBreakRecharge));
-			}
 		}
 		else if(getEnergy() <= ENERGY_LEVEL_TIRED && !fatigueState.isFatigueState(FatigueStates.TIRED)) {
 			setFatigueState(FatigueStates.TIRED);
@@ -80,7 +75,7 @@ public class FatigueManager {
 			}
 		}
 		if(getEnergy() < 0) {
-			BotMain.Main.ai.getTaskManager().clearAddSave(new BotDataJPX.Break(((long) generateResetBreakDouble()), 100));
+			BotMain.Main.ai.getTaskManager().insertAtHead(new BotDataJPX.Break(((long) generateResetBreakDouble()), 100));
 			setEnergy(.5);
 			generateEnergyLevelStateThreshholds();
 		}
@@ -91,6 +86,7 @@ public class FatigueManager {
 	}
 	
 	private double generateResetBreakDouble() {
+		acceptBreak = true; //here to be called after RESET
 		double d = dom.nextDouble() * this.resetBreakDouble;
 		if(d > 3000000)
 			return d;

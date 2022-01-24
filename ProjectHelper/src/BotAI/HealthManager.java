@@ -15,6 +15,7 @@ public class HealthManager {
 	private int threshHoldToEat = 35;
 	private boolean foodIsRequired;
 	private int loopCounter = 0;
+	private boolean isInsertCalled = false;
 	
 	public HealthManager() {}
 	
@@ -25,9 +26,10 @@ public class HealthManager {
 	public boolean isHealthOk() {
 		generateIntToEat();
 		checkShouldRun();
-		if(shouldRun && getHitpoints() <= threshHoldToRun && foodIsRequired) {
+		if(shouldRun && getHitpoints() <= threshHoldToRun && foodIsRequired && !isInsertCalled && Players.localPlayer().isInCombat()) {
 			MethodProvider.log("Calling clearAddSave");
-			BotMain.Main.ai.getTaskManager().clearAddSave(new BotDataJPX.Walk(BankLocation.GRAND_EXCHANGE.getArea(5)));
+			BotMain.Main.ai.getTaskManager().insertAtHead(new BotDataJPX.Walk(BankLocation.GRAND_EXCHANGE.getArea(5)));
+			isInsertCalled = true;
 			return false;
 		}else if(getHitpoints() <= threshHoldToEat) {
 			MethodProvider.sleepUntil(() -> Tabs.open(Tab.INVENTORY), 1000);
@@ -35,6 +37,7 @@ public class HealthManager {
 				return false;
 			}
 		}
+		isInsertCalled = false;
 		return true;
 	}
 	
