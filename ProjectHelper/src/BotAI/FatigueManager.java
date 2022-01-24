@@ -10,6 +10,8 @@ public class FatigueManager {
 	private static final int  ENERGY_LEVEL_RELAXED = 70;
 	private static final int  ENERGY_LEVEL_TIRED = 40;
 	private double energy = 100.00;
+	private double ResetBreakDouble = 10000000;
+	//SAVE 1000000 is 10 min
 	private Random dom = new Random();
 	
 	 
@@ -32,17 +34,35 @@ public class FatigueManager {
 		setEnergy(getEnergy() - generateRandomDouble(consume));
 	}
 	
-	public void checkEnergy() {
+	public void rechargeEnergy(double add) {
+		setEnergy(getEnergy() + add);
+	}
+	
+	public void checkEnergyLevel() {
 		if(getEnergy() <= ENERGY_LEVEL_RELAXED && !fatigueState.isFatigueState(FatigueStates.RELAXED)) {
 			setFatigueState(FatigueStates.RELAXED);
 		}
 		if(getEnergy() <= ENERGY_LEVEL_TIRED && !fatigueState.isFatigueState(FatigueStates.TIRED)) {
 			setFatigueState(FatigueStates.TIRED);
 		}
+		//TODO BUG TEST THIS
+		if(getEnergy() < 0) {
+			BotMain.Main.ai.getTaskManager().clearAddSave(new BotDataJPX.Break(((long) generateResetBreakDouble()), 100));
+			setEnergy(.5);
+		}
 	}
-
+	
 	private int generateRandomInt(int offset) {
 		return (int) (Math.random() * offset);
+	}
+	
+	public double generateResetBreakDouble() {
+		double d = dom.nextDouble() * this.ResetBreakDouble;
+		if(d > 3000000)
+			return d;
+		else {
+			return d + 3000000;
+		}
 	}
 
 	public double generateRandomDouble(double consumeEnergy) {

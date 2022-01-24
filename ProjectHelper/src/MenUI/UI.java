@@ -9,6 +9,7 @@ import org.dreambot.api.script.ScriptManager;
 
 import BotAI.FatigueManager;
 import BotAI.FatigueStates;
+import BotAI.LevelManager;
 import Task.Task;
 import Task.TaskManager;
 
@@ -33,12 +34,16 @@ public class UI{
 
 
 	private JTextField textNPCName;
-	private TaskManager<Task> taskManager = BotMain.Main.taskManager;
+    static TaskManager<Task> taskManager = BotMain.Main.ai.getTaskManager();
+	static LevelManager levelManager = BotMain.Main.ai.getLevelManager();
 	public static JTextPane textLog = new JTextPane();
 	private JRadioButton rdbtnAttachAttack;
 	private JRadioButton rdbtnAttachDeforester;
 
 	private JTextField textTreeName;
+	private JTextField textSetAttackLevel;
+	private JTextField textSetStrengthLevel;
+	private JTextField textSetDefenceLevel;
 
 	/**
 	 * Launch the application.
@@ -102,37 +107,6 @@ public class UI{
 		
 		comboFatigueSelector.setBounds(10, 169, 98, 22);
 		panel.add(comboFatigueSelector);
-			
-				
-		//ATTACK PANEL
-		
-		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("Attack", null, panel_1, null);
-		panel_1.setLayout(null);
-		
-		textNPCName = new JTextField();
-		textNPCName.setBounds(10, 27, 114, 20);
-		panel_1.add(textNPCName);
-		textNPCName.setColumns(10);
-		
-		JLabel lblNPCName = new JLabel("NPC Name");
-		lblNPCName.setFont(new Font("Segoe UI Historic", Font.PLAIN, 15));
-		lblNPCName.setBounds(134, 30, 87, 14);
-		panel_1.add(lblNPCName);
-		
-		rdbtnAttachAttack = new JRadioButton("Attach Task {ATTACK}");
-		rdbtnAttachAttack.setBounds(227, 26, 152, 23);
-		panel_1.add(rdbtnAttachAttack);
-		
-		rdbtnAttachAttack.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(rdbtnAttachAttack.isSelected()) {
-					taskManager.add(new BotDataJPX.Attack(textNPCName.getText().trim())); 
-				}
-			}
-		});
 		//////////////////////////////////////////////////////////
 		
 		//DEFORESTER PANEL
@@ -165,10 +139,76 @@ public class UI{
 		lblNewLabel_1.setBounds(122, 28, 74, 20);
 		panel_2.add(lblNewLabel_1);
 		
+			
+		//ATTACK PANEL
+		
+		JPanel panel_1 = new JPanel();
+		tabbedPane.addTab("Attack", null, panel_1, null);
+		panel_1.setLayout(null);
+		
+		textNPCName = new JTextField();
+		textNPCName.setBounds(10, 27, 114, 20);
+		panel_1.add(textNPCName);
+		textNPCName.setColumns(10);
+		
+		JLabel lblNPCName = new JLabel("NPC Name");
+		lblNPCName.setFont(new Font("Segoe UI Historic", Font.PLAIN, 15));
+		lblNPCName.setBounds(134, 30, 87, 14);
+		panel_1.add(lblNPCName);
+		
+		rdbtnAttachAttack = new JRadioButton("Attach Task {ATTACK}");
+		rdbtnAttachAttack.setBounds(227, 26, 152, 23);
+		panel_1.add(rdbtnAttachAttack);
+		
+		textSetAttackLevel = new JTextField();
+		textSetAttackLevel.setText("0");
+		textSetAttackLevel.setBounds(10, 58, 45, 20);
+		panel_1.add(textSetAttackLevel);
+		textSetAttackLevel.setColumns(10);
+		
+		textSetStrengthLevel = new JTextField();
+		textSetStrengthLevel.setText("0");
+		textSetStrengthLevel.setBounds(10, 89, 45, 20);
+		panel_1.add(textSetStrengthLevel);
+		textSetStrengthLevel.setColumns(10);
+		
+		textSetDefenceLevel = new JTextField();
+		textSetDefenceLevel.setText("0");
+		textSetDefenceLevel.setBounds(10, 120, 45, 20);
+		panel_1.add(textSetDefenceLevel);
+		textSetDefenceLevel.setColumns(10);
+		
+		JLabel lblNewLabel_2 = new JLabel("Train Attack (Level)");
+		lblNewLabel_2.setBounds(65, 61, 102, 14);
+		panel_1.add(lblNewLabel_2);
+		
+		JLabel lblNewLabel_3 = new JLabel("Train Strength (Level)");
+		lblNewLabel_3.setBounds(65, 92, 114, 14);
+		panel_1.add(lblNewLabel_3);
+		
+		JLabel lblNewLabel_4 = new JLabel("Train Defence (Level)");
+		lblNewLabel_4.setBounds(65, 123, 114, 14);
+		panel_1.add(lblNewLabel_4);
+		
+		rdbtnAttachAttack.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(rdbtnAttachAttack.isSelected()) {
+					taskManager.add(new BotDataJPX.Attack(textNPCName.getText().trim())); 
+					levelManager.setLevelAttackTo(Integer.parseInt(textSetAttackLevel.getText().trim()));
+					levelManager.setLevelStrengthTo(Integer.parseInt(textSetStrengthLevel.getText().trim()));
+					levelManager.setLevelDefenceTo(Integer.parseInt(textSetDefenceLevel.getText().trim()));
+				}
+			}
+		});
+		
 		
 		///////////////////////////////////////////////////////////
 		
 		JButton btnPause = new JButton("Pause");
+		JButton btnUpdate = new JButton("Update and Resume");
+
 
 		//RESET BUTTON
 		
@@ -179,6 +219,7 @@ public class UI{
 			public void actionPerformed(ActionEvent e) {
 				taskManager.clear();
 				deselectRDBTN();
+				updateLog();
 			}
 		});
 		btnReset.setForeground(Color.BLACK);
@@ -188,10 +229,8 @@ public class UI{
 		
 		//UPDATE BUTTON
 		
-		JButton btnUpdate = new JButton("Update and Resume");
 		btnUpdate.setBounds(364, 369, 145, 37);
 		getFrame().getContentPane().add(btnUpdate);
-		btnUpdate.setEnabled(false);
 		btnUpdate.setBackground(Color.CYAN);
 		btnUpdate.addActionListener(new ActionListener() {
 
@@ -201,17 +240,18 @@ public class UI{
 				ScriptManager.getScriptManager().resume();
 				btnPause.setEnabled(true);
 				btnUpdate.setEnabled(false);
+				btnReset.setEnabled(false);
 			}
 			
 		});
 		
 		/////////////////////////////////////////////////
 		
-	//PAUSE BUTTON
+		//PAUSE BUTTON TODO Attach pause function from DBS client
 		
 		btnPause.setBounds(31, 369, 98, 37);
 		getFrame().getContentPane().add(btnPause);
-		btnPause.setEnabled(true);
+		btnPause.setEnabled(false);
 		btnPause.setForeground(Color.BLACK);
 		btnPause.setBackground(Color.CYAN);
 			
@@ -221,6 +261,7 @@ public class UI{
 					ScriptManager.getScriptManager().pause();
 					btnUpdate.setEnabled(true);
 					btnPause.setEnabled(false);
+					btnReset.setEnabled(true);
 			}		
 		});
 		
@@ -242,9 +283,10 @@ public class UI{
 	
 	public void updateLog() {
 		textLog.setText("");
-		textLog.setText(taskManager.toString());
+		textLog.setText(taskManager.toString() + taskManager.size());
 		textLog.setText(textLog.getText() + "\n" + FatigueManager.getInstance().getEnergy());
 		textLog.setText(textLog.getText() + "\n" + FatigueManager.getInstance().getFatigueState());
+		textLog.setText(textLog.getText() + "\n" + levelManager);
 	}
 	
 	public void deselectRDBTN() {

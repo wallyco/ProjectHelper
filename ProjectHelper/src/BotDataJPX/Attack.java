@@ -20,7 +20,6 @@ public class Attack implements Task {
         npcName = name;
     }
     
-
 	@Override
 	public double fatigueRate() {
 		return .08;
@@ -29,9 +28,9 @@ public class Attack implements Task {
     @Override
     public boolean execute() {
         if(shouldAttack()) {
-            return attack();
+            attack();
         }
-        return false;
+        return true;
     }
     
     private Boolean shouldAttack() {

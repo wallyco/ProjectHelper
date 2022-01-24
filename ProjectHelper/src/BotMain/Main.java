@@ -5,19 +5,20 @@ import java.awt.EventQueue;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
+import org.dreambot.api.script.ScriptManager;
 import org.dreambot.api.script.ScriptManifest;
 
+import BotAI.AI;
 import BotAI.FatigueManager;
 import MenUI.UI;
-import Task.Task;
-import Task.TaskManager;
-
 
 @ScriptManifest(author = "JPX", category = Category.UTILITY, name = "ProjectHelper", version = 0.1)
 public class Main extends AbstractScript{
 	private UI gui = new UI();
-	public static TaskManager<Task> taskManager = new TaskManager<>();
-	int i = 6969;
+	public static AI ai = new AI();
+
+	private boolean firstrun = true;
+	private int i = 6969;
 	
 	@Override
 	public void onStart() {
@@ -35,8 +36,14 @@ public class Main extends AbstractScript{
 
 	@Override
 	public int onLoop() {
-		FatigueManager.getInstance().checkEnergy(); //TODO FIND new location for this
-		taskManager.getNext();
+		if(firstrun) {
+			ScriptManager.getScriptManager().pause();
+			firstrun = false;
+			FatigueManager.getInstance().setEnergy(1);
+		}
+
+		ai.act();
+		
 		gui.updateLog();
 		this.i = FatigueManager.getInstance().nextInt();
 		return this.i;
@@ -45,10 +52,12 @@ public class Main extends AbstractScript{
 
 	@Override
 	public void onExit() {
-		taskManager.clear();
+		ai.getTaskManager().clear();
 		gui.kill();
 	}
-	
 
+	public AI getAi() {
+		return ai;
+	}
 	
 }
