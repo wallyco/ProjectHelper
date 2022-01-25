@@ -75,7 +75,7 @@ public class FatigueManager {
 			}
 		}
 		if(getEnergy() < 0) {
-			BotMain.Main.ai.getTaskManager().insertAtHead(new BotDataJPX.Break(((long) generateResetBreakDouble()), 100));
+			BotMain.Main.ai.getTaskManager().insertAtHeadCopy(new BotDataJPX.Break(((long) generateResetBreakDouble()), 100));
 			setEnergy(.5);
 			generateEnergyLevelStateThreshholds();
 		}

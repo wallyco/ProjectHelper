@@ -18,10 +18,10 @@ public class Walk implements Task {
 
 	public Walk() {
 		fm.setFatigueState(FatigueStates.ENGAGED);
-
 	}
 	
 	public Walk(Area area) {
+		this();
 		this.area = area;
 	}
 	

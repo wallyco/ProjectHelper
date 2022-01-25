@@ -8,7 +8,6 @@ import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.script.ScriptManager;
 
 import BotAI.FatigueManager;
-import BotAI.FatigueStates;
 import BotAI.LevelManager;
 import Task.Task;
 import Task.TaskManager;
@@ -25,7 +24,6 @@ import javax.swing.JTextPane;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JRadioButton;
-import javax.swing.JComboBox;
 
 
 public class UI{
@@ -44,6 +42,8 @@ public class UI{
 	private JTextField textSetAttackLevel;
 	private JTextField textSetStrengthLevel;
 	private JTextField textSetDefenceLevel;
+	private JTextField textBankItem;
+	private JTextField textSetEnergy;
 
 	/**
 	 * Launch the application.
@@ -97,16 +97,10 @@ public class UI{
 		lblNewLabel.setBounds(118, 236, 71, 20);
 		panelMain.add(lblNewLabel);
 		
-		JComboBox<FatigueStates> comboFatigueSelector = new JComboBox<>();
-		comboFatigueSelector.setEditable(false);
-		
-		comboFatigueSelector.addItem(FatigueStates.DEFAULT);
-		comboFatigueSelector.addItem(FatigueStates.ENGAGED);
-		comboFatigueSelector.addItem(FatigueStates.RELAXED);
-		comboFatigueSelector.addItem(FatigueStates.TIRED);
-		
-		comboFatigueSelector.setBounds(10, 235, 98, 22);
-		panelMain.add(comboFatigueSelector);
+		textSetEnergy = new JTextField();
+		textSetEnergy.setBounds(25, 236, 86, 20);
+		panelMain.add(textSetEnergy);
+		textSetEnergy.setColumns(10);
 		
 			
 		//ATTACK PANEL
@@ -193,7 +187,7 @@ public class UI{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(rdbtnAttachDeforester.isSelected()) {
-					taskManager.add(new BotDataJPX.Deforester(textTreeName.getText().trim())); 
+					taskManager.add(new BotDataJPX.Deforester(textTreeName.getText().trim(), textBankItem.getText())); 
 				}
 			}
 			
@@ -202,6 +196,11 @@ public class UI{
 		JLabel lblNewLabel_1 = new JLabel("Tree Name");
 		lblNewLabel_1.setBounds(122, 28, 74, 20);
 		panelDeforester.add(lblNewLabel_1);
+		
+		textBankItem = new JTextField();
+		textBankItem.setBounds(26, 52, 86, 20);
+		panelDeforester.add(textBankItem);
+		textBankItem.setColumns(10);
 		
 		JPanel panelDev = new JPanel();
 		tabbedPane.addTab("Dev Tab", null, panelDev, null);
@@ -239,7 +238,7 @@ public class UI{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FatigueManager.getInstance().setFatigueState((FatigueStates) comboFatigueSelector.getSelectedItem());
+				FatigueManager.getInstance().setEnergy(Double.parseDouble(textSetEnergy.getText()));
 				ScriptManager.getScriptManager().resume();
 				btnPause.setEnabled(true);
 				btnUpdate.setEnabled(false);

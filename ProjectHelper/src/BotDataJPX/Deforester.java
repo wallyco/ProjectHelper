@@ -3,12 +3,15 @@ package BotDataJPX;
 import java.util.Objects;
 
 import org.dreambot.api.methods.MethodProvider;
+import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.Player;
 
+import BotAI.FatigueManager;
+import BotMain.Main;
 import Task.Task;
 
 public class Deforester implements Task{
@@ -16,11 +19,13 @@ public class Deforester implements Task{
 	private GameObject tree;
 	private String treeName;
 	private Player player = Players.localPlayer();
+	private String DEPOSIT_ITEM;
 	
 	public Deforester() {}
 	
-	public Deforester(String name) {
-		this.treeName = name;
+	public Deforester(String treeName, String depositItem) {
+		this.treeName = treeName;
+		this.DEPOSIT_ITEM = depositItem;
 	}
 
 	@Override
@@ -28,8 +33,7 @@ public class Deforester implements Task{
 		if(accept()) {
 			woodcut();
 		}
-		
-		return false;
+		return true;
 	}
 
 	@Override
@@ -38,6 +42,12 @@ public class Deforester implements Task{
 	}
 	
 	private boolean accept() {
+		
+		if(getTree() != null && getTree().getSurroundingArea(2).contains(player)) {
+			if(getTree().exists())
+				return false;
+		}
+
 		if(Dialogues.canContinue())
 			Dialogues.continueDialogue();
 		
@@ -49,6 +59,11 @@ public class Deforester implements Task{
 				return false;
 		}
 		
+		if(Inventory.isFull()) {
+			Main.ai.getTaskManager().insertAtHeadCopy(new Bank(DEPOSIT_ITEM));
+			return false;
+		}
+		
 		return true;
 	}
 	
@@ -56,7 +71,9 @@ public class Deforester implements Task{
 		setTree(tree);
 		if(tree != null) {
 			MethodProvider.sleepUntil(() -> tree.interact("Chop down"), 2500);
+			MethodProvider.sleepUntil(() -> tree.getSurroundingArea(2).contains(player), 500);
 			MethodProvider.sleep(50);
+			FatigueManager.getInstance().consumeEnergy(fatigueRate());
 			return true;
 		}
 		return false;
@@ -67,9 +84,13 @@ public class Deforester implements Task{
 	}
 
 	public void setTree(GameObject tree) {
-		tree = GameObjects.closest(t -> t != null && t.getName().equals(treeName));
+		tree = GameObjects.closest(t -> t != null 
+				&& t.getName().equals(treeName) 
+				&& t.canReach());
 		if(tree != null) {
 			this.tree = tree;
+		}else {
+			Main.ai.getTaskManager().insertAtHeadCopy(new Walk(Players.localPlayer().getSurroundingArea(15).getRandomTile().getArea(5)));
 		}
 	}
 

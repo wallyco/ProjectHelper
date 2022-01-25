@@ -28,7 +28,7 @@ public class HealthManager {
 		checkShouldRun();
 		if(shouldRun && getHitpoints() <= threshHoldToRun && foodIsRequired && !isInsertCalled && Players.localPlayer().isInCombat()) {
 			MethodProvider.log("Calling clearAddSave");
-			BotMain.Main.ai.getTaskManager().insertAtHead(new BotDataJPX.Walk(BankLocation.GRAND_EXCHANGE.getArea(5)));
+			BotMain.Main.ai.getTaskManager().insertAtHeadCopy(new BotDataJPX.Walk(BankLocation.GRAND_EXCHANGE.getArea(5)));
 			isInsertCalled = true;
 			return false;
 		}else if(getHitpoints() <= threshHoldToEat) {

@@ -23,8 +23,6 @@ public class Main extends AbstractScript{
 	
 	@Override
 	public void onStart() {
-		timeBegan = System.currentTimeMillis();	
-
 		MethodProvider.log("Loading gui");
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -40,13 +38,14 @@ public class Main extends AbstractScript{
 
 	@Override
 	public int onLoop() {
+		//PAUSE HERE AND ADD A STATIC VALUE TO ENERGYLEVEL UI
 		if(firstrun) {
 			ScriptManager.getScriptManager().pause();
+			timeBegan = System.currentTimeMillis();	
 			firstrun = false;
+		}else {
+			ai.act();
 		}
-
-		ai.act();
-		
 		gui.updateLog();
 		this.i = FatigueManager.getInstance().nextInt();
 		return this.i;
@@ -57,6 +56,7 @@ public class Main extends AbstractScript{
 	public void onExit() {
 		ai.getTaskManager().clear();
 		gui.kill();
+		ScriptManager.getScriptManager().stop();
 	}
 	
 	//TODO MAKE YOUR OWN

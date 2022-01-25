@@ -42,7 +42,7 @@ public class TaskManager<E extends Task> {
 		listOfTasks.clear();
 	}
 	
-	public void insertAtHead(Task task) {
+	public void insertAtHeadCopy(Task task) {
 		if(!listOfTasks.contains(task)) {
 			for(Task t : listOfTasks) {
 				copy.add(t);
@@ -54,7 +54,39 @@ public class TaskManager<E extends Task> {
 			}
 			copy.clear();
 		}
+	}
 	
+	public void insertAtHeadDelete(Task task) {
+		getNext();
+		if(!listOfTasks.contains(task)) {
+			for(Task t : listOfTasks) {
+				copy.add(t);
+			}
+			clear();
+			this.add(task);
+			for(Task t : copy) {
+				listOfTasks.add(t);
+			}
+			copy.clear();
+		}
+	}
+	
+	public void insertBehindHead(Task task) {
+		Task temp = listOfTasks.peek();
+		if(!listOfTasks.contains(task)) {
+			for(Task t : listOfTasks) {
+				copy.add(t);
+			}
+			listOfTasks.clear();
+			copy.poll();
+			listOfTasks.add(temp);
+			listOfTasks.add(task);
+			for(Task t : copy) {
+				listOfTasks.add(t);
+			}
+			copy.clear();
+			
+		}
 	}
 	
 	public void offer(Task o) {
