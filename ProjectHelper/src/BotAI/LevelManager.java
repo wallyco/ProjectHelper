@@ -22,7 +22,7 @@ public class LevelManager {
 	
 	public boolean continueLeveling() {
 		getLevels();
-		
+		//this is coupled
 		if(levelAttackTo
 				+levelStrengthTo
 				+levelDefenceTo == 0) {
@@ -30,7 +30,7 @@ public class LevelManager {
 		}
 		
 		if(levelWoodCutting < levelWoodCuttingTo
-			|| levelWoodCutting == 0) {
+			&& levelWoodCutting != 0) {
 			return true;
 		}
 

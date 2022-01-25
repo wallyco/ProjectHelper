@@ -39,23 +39,6 @@ public class Bank implements Task {
 		}
 		
 		return true;		
-//		if(!Inventory.contains(itemName) && !banked) {
-//			banked = true;
-//			org.dreambot.api.methods.container.impl.bank.Bank.close();
-//			return true;
-//		}
-//		
-//		if(!org.dreambot.api.methods.container.impl.bank.Bank.isOpen() && !banked) {
-//			org.dreambot.api.methods.container.impl.bank.Bank.openClosest();
-//			return true;
-//		}else {
-//			if(org.dreambot.api.methods.container.impl.bank.Bank.depositAllItems());
-//				return true;
-//		}
-		
-		//return false;
-			//DEPOSITING ALL FOR TESTING
-
 	}
 
 	@Override

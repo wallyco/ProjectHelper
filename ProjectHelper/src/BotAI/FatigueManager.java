@@ -63,7 +63,9 @@ public class FatigueManager {
 	}
 	
 	public void checkEnergyLevel() {
-		if(getEnergy() <= ENERGY_LEVEL_RELAXED && !fatigueState.isFatigueState(FatigueStates.RELAXED)) {
+		if(getEnergy() <= ENERGY_LEVEL_RELAXED 
+				&& getEnergy() > ENERGY_LEVEL_TIRED 
+				&&!fatigueState.isFatigueState(FatigueStates.RELAXED)) {
 			setFatigueState(FatigueStates.RELAXED);
 		}
 		else if(getEnergy() <= ENERGY_LEVEL_TIRED && !fatigueState.isFatigueState(FatigueStates.TIRED)) {
