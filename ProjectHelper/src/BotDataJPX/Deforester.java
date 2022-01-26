@@ -90,7 +90,7 @@ public class Deforester implements Task{
 		if(tree != null) {
 			this.tree = tree;
 		}else {
-			Main.ai.getTaskManager().insertAtHeadCopy(new Walk(Players.localPlayer().getSurroundingArea(15).getRandomTile().getArea(5)));
+			//Main.ai.getTaskManager().insertAtHeadCopy(new Walk(Players.localPlayer().getSurroundingArea(11).getRandomTile().getArea(2)));
 		}
 	}
 

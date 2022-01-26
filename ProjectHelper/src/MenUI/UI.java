@@ -98,6 +98,7 @@ public class UI{
 		panelMain.add(lblNewLabel);
 		
 		textSetEnergy = new JTextField();
+		textSetEnergy.setText("100");
 		textSetEnergy.setBounds(25, 236, 86, 20);
 		panelMain.add(textSetEnergy);
 		textSetEnergy.setColumns(10);

@@ -12,6 +12,7 @@ public class FatigueManager {
 	private double energy = 100.00;
 	private double resetBreakDouble = 10000000;
 	private double shortBreakDouble = 1000000;
+	private int generateResetBreakInt = 3000000;
 	private int shortBreakRecharge = 0;
 	public boolean acceptBreak = true;
 	//SAVE 1000000 is ~10-30 mins
@@ -90,10 +91,10 @@ public class FatigueManager {
 	private double generateResetBreakDouble() {
 		acceptBreak = true; //here to be called after RESET
 		double d = dom.nextDouble() * this.resetBreakDouble;
-		if(d > 3000000)
+		if(d > generateResetBreakInt)
 			return d;
 		else {
-			return d + 3000000;
+			return d + generateResetBreakInt;
 		}
 	}
 	
