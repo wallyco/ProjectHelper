@@ -7,6 +7,7 @@ import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.NPCs;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.wrappers.interactive.NPC;
+
 import Task.Task;
 
 public class Attack implements Task {
@@ -22,21 +23,28 @@ public class Attack implements Task {
     
 	@Override
 	public double fatigueRate() {
-		return .08;
+		return 1.5;
 	}
     
     @Override
     public boolean execute() {
-        if(shouldAttack()) {
-            attack();
+        if(!levelManager.continueLevelingCombat()) {
+        	return false;
+        }
+        
+    	if(shouldAttack()
+            && attack()) {
+    		fatigueManager.consumeEnergy(fatigueRate());
         }
         return true;
     }
     
-    private Boolean shouldAttack() {
-        if(Dialogues.canContinue()) {
+    protected boolean shouldAttack() {
+        
+    	if(Dialogues.canContinue()) {
             Dialogues.continueDialogue();
         }
+
         MethodProvider.sleep(50);
         
         if(Players.localPlayer().isAnimating() || Players.localPlayer().isInCombat()) {
@@ -47,7 +55,7 @@ public class Attack implements Task {
         return true;
     }
     
-    private boolean attack() {
+    protected boolean attack() {
         setNPC(npc);
         MethodProvider.sleep(50);
 
@@ -57,7 +65,21 @@ public class Attack implements Task {
         {
             MethodProvider.sleepUntil(() -> getNPC().interact("Attack"), 1000);
             MethodProvider.sleepWhile(() -> Players.localPlayer().isAnimating(), 3000);
-            fm.consumeEnergy(fatigueRate());
+            return true;
+        }
+        return false;
+    }
+    
+    protected boolean attack(String interact) {
+        setNPC(npc);
+        MethodProvider.sleep(50);
+
+        if(getNPC() != null
+                && !getNPC().isInCombat()
+                && getNPC().canReach())
+        {
+            MethodProvider.sleepUntil(() -> getNPC().interact(interact), 1000);
+            MethodProvider.sleepWhile(() -> Players.localPlayer().isAnimating(), 3000);
             return true;
         }
         return false;
@@ -83,7 +105,13 @@ public class Attack implements Task {
         MethodProvider.sleep(50);
         this.npc = npc;
     }
-
+    
+    public void setLevelManager(int str, int att, int def) {
+    	levelManager.setLevelAttackTo(att);
+    	levelManager.setLevelStrengthTo(str);
+    	levelManager.setLevelDefenceTo(def);
+    }
+    
 	@Override
 	public String toString() {
 		return "Attack [npcName=" + npcName + "]";

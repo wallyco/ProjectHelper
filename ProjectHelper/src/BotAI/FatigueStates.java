@@ -3,7 +3,7 @@ package BotAI;
 public enum FatigueStates {
 	ENGAGED("Engaged", 2300),
 	RELAXED("Relaxed", 6500),
-	TIRED("Tired", 11000),
+	TIRED("Tired", 180000),
 	DEFAULT("DEFAULT", 5000);
 			
 	FatigueStates(String state, int level) {

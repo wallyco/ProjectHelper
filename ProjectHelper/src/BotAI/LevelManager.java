@@ -17,23 +17,23 @@ public class LevelManager {
 	private int levelStrengthTo = 0;
 	private int levelDefenceTo = 0;
 	private int levelWoodCuttingTo = 0;
+	private int numberOfKillsToObtain = 0;
+	private int numberOfKills = 0;
 	
-	public LevelManager() {} 
+	public LevelManager() {}
 	
-	public boolean continueLeveling() {
+	public LevelManager(int numberOfKillsToObtain) {
+		this.numberOfKillsToObtain = numberOfKillsToObtain;
+	}
+	
+	
+	public boolean continueLevelingCombat() {
 		getLevels();
-		//this is coupled
 		if(levelAttackTo
 				+levelStrengthTo
 				+levelDefenceTo == 0) {
 			return true;
 		}
-		
-		if(levelWoodCutting < levelWoodCuttingTo
-			&& levelWoodCutting != 0) {
-			return true;
-		}
-
 		if(levelStrength < levelStrengthTo) {
 			if(Combat.getCombatStyle() != CombatStyle.STRENGTH)
 				Tabs.open(Tab.COMBAT);
@@ -52,9 +52,29 @@ public class LevelManager {
 				Combat.setCombatStyle(CombatStyle.DEFENCE);
 			return true;
 		}
+		
 		return false;
 	}
 	
+	public boolean continueSlaying() {
+		if(continueLevelingCombat() ||
+			getNumberOfKills() < getNumberOfKillsToObtain()) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean continueLevelingWoodcutting() {
+		getLevels();
+		if(levelWoodCutting < levelWoodCuttingTo
+				&& levelWoodCutting != 0) {
+				return true;
+		}
+		
+		return false;
+	}
+	
+	//Break this apart into separate methods
 	
 	private void getLevels() {
 		this.levelAttack = Skills.getRealLevel(Skill.ATTACK);
@@ -119,6 +139,46 @@ public class LevelManager {
 	public void setLevelWoodCut(int levelWoodCut) {
 		this.levelWoodCutting = levelWoodCut;
 	}
+
+	public int getLevelWoodCutting() {
+		return levelWoodCutting;
+	}
+
+
+	public void setLevelWoodCutting(int levelWoodCutting) {
+		this.levelWoodCutting = levelWoodCutting;
+	}
+
+
+	public int getLevelWoodCuttingTo() {
+		return levelWoodCuttingTo;
+	}
+
+
+	public void setLevelWoodCuttingTo(int levelWoodCuttingTo) {
+		this.levelWoodCuttingTo = levelWoodCuttingTo;
+	}
+
+
+	public int getNumberOfKillsToObtain() {
+		return numberOfKillsToObtain;
+	}
+
+
+	public void setNumberOfKillsToObtain(int numberOfKillsToObtain) {
+		this.numberOfKillsToObtain = numberOfKillsToObtain;
+	}
+
+
+	public int getNumberOfKills() {
+		return numberOfKills;
+	}
+
+
+	public void setNumberOfKills(int numberOfKills) {
+		this.numberOfKills = numberOfKills;
+	}
+
 
 	@Override
 	public String toString() {

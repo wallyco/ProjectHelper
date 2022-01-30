@@ -4,7 +4,6 @@ import org.dreambot.api.utilities.Timer;
 import org.dreambot.api.randoms.RandomEvent;
 import org.dreambot.api.script.ScriptManager;
 
-import BotAI.FatigueManager;
 import Task.Task;
 
 public class Break implements Task {
@@ -13,19 +12,24 @@ public class Break implements Task {
 	
 	public Break(long runtime) {
 		startTimer(runtime);
+		fatigueManager.setAcceptBreak(false);
 	}
 	
 	public Break(long runtime, int add) {
 		startTimer(runtime);
 		this.addedEnergy = add;
 		ScriptManager.getScriptManager().getCurrentScript().getRandomManager().disableSolver(RandomEvent.LOGIN);
+		fatigueManager.setAcceptBreak(false);
 	}
 
 	@Override
 	public boolean execute() {
-		if(!stopwatch.finished())
+		if(!stopwatch.finished()) {
+			//if(Players.localPlayer())
 			return true;
-		FatigueManager.getInstance().rechargeEnergy(addedEnergy);
+		}
+		fatigueManager.rechargeEnergy(addedEnergy);
+		fatigueManager.setAcceptBreak(true);
 		ScriptManager.getScriptManager().getCurrentScript().getRandomManager().enableSolver(RandomEvent.LOGIN);
 		return false;
 	}

@@ -5,7 +5,6 @@ import Task.Task;
 import Task.TaskManager;
 
 public class AI {
-	private LevelManager levelManager = new LevelManager();
 	private TaskManager<Task> taskManager = new TaskManager<>();
 	private HealthManager healthManager = new HealthManager(true);
 	
@@ -15,16 +14,7 @@ public class AI {
 	public void act() {
 		healthManager.isHealthOk();
 		FatigueManager.getInstance().checkEnergyLevel();
-		if(levelManager.continueLeveling())
-			getTaskManager().perform();
-	}
-
-	public LevelManager getLevelManager() {
-		return levelManager;
-	}
-
-	public void setLevelManager(LevelManager levelManager) {
-		this.levelManager = levelManager;
+		getTaskManager().perform();
 	}
 
 	public TaskManager<Task> getTaskManager() {
@@ -42,6 +32,7 @@ public class AI {
 	public void setHealthManager(HealthManager healthManager) {
 		this.healthManager = healthManager;
 	}
+	
 	
 	
 	

@@ -2,6 +2,7 @@ package BotMain;
 
 import java.awt.EventQueue;
 import java.awt.Graphics;
+import java.lang.reflect.Array;
 import java.util.concurrent.TimeUnit;
 
 import org.dreambot.api.methods.MethodProvider;
@@ -10,8 +11,11 @@ import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManager;
 import org.dreambot.api.script.ScriptManifest;
 
+import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location;
+
 import BotAI.AI;
 import BotAI.FatigueManager;
+import BotLocations.Locations;
 import MenUI.UI;
 
 @ScriptManifest(author = "JPX", category = Category.UTILITY, name = "ProjectHelper", version = 0.1)
@@ -23,6 +27,7 @@ public class Main extends AbstractScript{
 	
 	@Override
 	public void onStart() {
+		timeBegan = System.currentTimeMillis();
 		MethodProvider.log("Loading gui");
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -33,7 +38,6 @@ public class Main extends AbstractScript{
 				}
 			}
 		});
-		
 	}
 
 	@Override
@@ -41,7 +45,6 @@ public class Main extends AbstractScript{
 		//PAUSE HERE AND ADD A STATIC VALUE TO ENERGYLEVEL UI
 		if(firstrun) {
 			ScriptManager.getScriptManager().pause();
-			timeBegan = System.currentTimeMillis();	
 			firstrun = false;
 		}else {
 			ai.act();

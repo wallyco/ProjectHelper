@@ -11,8 +11,8 @@ public class HealthManager {
 	private boolean shouldRun = Inventory.isEmpty() || Inventory.contains(item -> item != null && !item.hasAction("Eat"));
 	@SuppressWarnings("unused")
 	private int hitpoints = 0;
-	private int threshHoldToRun = 40;
-	private int threshHoldToEat = 35;
+	private int thresholdToRun = 50;
+	private int thresholdToEat = 35;
 	private boolean foodIsRequired;
 	private int loopCounter = 0;
 	private boolean isInsertCalled = false;
@@ -26,12 +26,11 @@ public class HealthManager {
 	public boolean isHealthOk() {
 		generateIntToEat();
 		checkShouldRun();
-		if(shouldRun && getHitpoints() <= threshHoldToRun && foodIsRequired && !isInsertCalled && Players.localPlayer().isInCombat()) {
-			MethodProvider.log("Calling clearAddSave");
-			BotMain.Main.ai.getTaskManager().insertAtHeadCopy(new BotDataJPX.Walk(BankLocation.GRAND_EXCHANGE.getArea(5)));
+		if(shouldRun && getHitpoints() <= thresholdToRun && foodIsRequired && !isInsertCalled && Players.localPlayer().isInCombat()) {
+			BotMain.Main.ai.getTaskManager().insertAtHeadDelete(new BotDataJPX.Walk(BankLocation.GRAND_EXCHANGE.getArea(5)));
 			isInsertCalled = true;
 			return false;
-		}else if(getHitpoints() <= threshHoldToEat) {
+		}else if(getHitpoints() <= thresholdToEat) {
 			MethodProvider.sleepUntil(() -> Tabs.open(Tab.INVENTORY), 1000);
 			if(Inventory.interact(item -> item != null && item.hasAction("Eat"), "Eat")) {
 				return false;
@@ -56,7 +55,7 @@ public class HealthManager {
 	private void generateIntToEat() {
 		loopCounter++;
 		if(loopCounter == 10) {
-			this.threshHoldToEat = (int) (Math.random() * 30 + 30);
+			this.thresholdToEat = (int) (Math.random() * 30 + 45);
 			loopCounter = 0;
 		}
 	}

@@ -6,6 +6,7 @@ import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.walking.impl.Walking;
 
+import BotAI.FatigueManager;
 import BotAI.FatigueStates;
 import Task.Task;
 
@@ -17,7 +18,7 @@ public class Walk implements Task {
 	private String NAME = "Walk";
 
 	public Walk() {
-		fm.setFatigueState(FatigueStates.ENGAGED);
+		fatigueManager.setFatigueState(FatigueStates.ENGAGED);
 	}
 	
 	public Walk(Area area) {
@@ -29,8 +30,9 @@ public class Walk implements Task {
 	@Override
 	public boolean execute() {
 		
-		if(area.canReach() && area != null && !area.contains(Players.localPlayer())){
+		if(area != null && !area.contains(Players.localPlayer())){
 			Walking.walk(area);
+			FatigueManager.getInstance().consumeEnergy(fatigueRate());
 			return true;
 		}
 
@@ -39,7 +41,7 @@ public class Walk implements Task {
 
 	@Override
 	public double fatigueRate() {
-		return 0;
+		return .01;
 	}
 
 	@Override

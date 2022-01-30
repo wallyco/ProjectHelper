@@ -1,44 +1,156 @@
 package BotDataJPX;
+import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Stream;
 
+import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
+import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.Players;
+import org.dreambot.api.methods.item.GroundItems;
 import org.dreambot.api.methods.map.Tile;
 
 import BotMain.Main;
 import Task.Task;
 
 public class Bank implements Task {
-	private String itemName ="undefined";
+	private ArrayList<String> listOfItemsToWithdraw = new ArrayList<>();
+	private ArrayList<String> listOfItemsToDeposit = new ArrayList<>();
+	private boolean bankingMethod = true; //true == deposit
 	private Tile returnTile = Players.localPlayer().getTile();
 	private Tile bankTile = org.dreambot.api.methods.container.impl.bank.Bank.getClosestBankLocation().getCenter();
-	private boolean firstrun = true; //TODO TEMP FIX SYNCHRONISE THE QUEUE
+	private boolean firstrun = true; //TODO TEMP FIX SYNCHRONIZE THE QUEUE
+	private int amount = 0;
+	
+	public Bank() {}
+	
 	
 	public Bank(String name) {
-		itemName = name;
+		listOfItemsToDeposit.add(name);
+	}
+	
+	public Bank(ArrayList<String> list) {
+		for(String s : list) {
+			this.listOfItemsToDeposit.add(s);
+		}
+	}
+	
+	public Bank(String[] name) {
+		for(String e: name) {
+			MethodProvider.log("adding");
+			this.listOfItemsToDeposit.add(e);
+		}
+	}
+	public Bank(boolean method, String itemName) {
+		this.bankingMethod = method;
+		this.listOfItemsToDeposit.add(itemName);
+	}
+	
+	public Bank(boolean method, String itemName, int amount) {
+		this.bankingMethod = method;
+		this.listOfItemsToDeposit.add(itemName);
+		this.amount = amount;
+	}
+	
+	public Bank(boolean method, String[] itemsToManipulate) {
+		this.bankingMethod = method;
+		if(method) {
+			for(String s : itemsToManipulate) {
+				this.listOfItemsToDeposit.add(s);
+			}
+		}else {
+			for(String s : listOfItemsToWithdraw) {
+				this.listOfItemsToWithdraw.add(s);
+			}
+		}
 	}
 	
 	@Override
 	public boolean execute() {
+		if(Dialogues.canContinue())
+			Dialogues.continueDialogue();
+		
 		if(firstrun) {
-			Main.ai.getTaskManager().insertAtHeadCopy(new Walk(bankTile.getArea(5)));
+			Main.ai.getTaskManager().insertAtHeadCopy(new Walk(bankTile.getArea(8)));
 			firstrun = false;
 			return true;
-		}else if(Inventory.contains(itemName)) {
-			if(!org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
+		}else if(bankingMethod) {
+			if(depositAll()) {
+				Main.ai.getTaskManager().insertBehindHead(new BotDataJPX.Walk(returnTile.getArea(5)));
+				return false;
+			}
+		}else {
+			if(withdrawAll()) {;
+				Main.ai.getTaskManager().insertBehindHead(new BotDataJPX.Walk(returnTile.getArea(5)));
+				return false;
+			}
+		}
+
+		return true;		
+	}
+	
+	public boolean depositAll() {
+		MethodProvider.log(getListOfItemsToDeposit());
+		if(Inventory.contains(getListOfItemsToDeposit().get(0).toString())) {
+			if(bankTile.getArea(10).contains(player) && !org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
 				org.dreambot.api.methods.container.impl.bank.Bank.open();
 			}else if(org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
-				org.dreambot.api.methods.container.impl.bank.Bank.depositAll(itemName);
+				this.listOfItemsToDeposit.stream().forEach(e -> {
+					org.dreambot.api.methods.container.impl.bank.Bank.depositAll(e);
+				});
 				return true;
 			}
 		}
-		
-		if(!Inventory.contains(itemName)) {
-			Main.ai.getTaskManager().insertBehindHead(new Walk(returnTile.getArea(6)));
-			return false;
+		return false;
+	}
+	
+	public boolean withdrawAll() {
+		if(!Inventory.contains(getListOfItemsToDeposit().get(0).toString())) {
+			if(bankTile.getArea(10).contains(player) && !org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
+				org.dreambot.api.methods.container.impl.bank.Bank.open();
+			}else if(org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
+				this.listOfItemsToWithdraw.stream().forEach(e -> {
+					org.dreambot.api.methods.container.impl.bank.Bank.withdrawAll(e);
+				});
+				return true;
+			}
 		}
-		
-		return true;		
+		return false;
+	}
+	
+//	public boolean withdraw(int amount) {
+//		if(bankTile.getArea(10).contains(player) && !org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
+//			org.dreambot.api.methods.container.impl.bank.Bank.open();
+//		}else if(org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
+//			if(org.dreambot.api.methods.container.impl.bank.Bank.withdraw(listOfItemsToWithdraw.toString(), amount));
+//				return true;
+//		}
+//		return false;
+//	}
+
+
+	public void addToListOfItemsToWithdraw(String[] arr) {
+		for(String s: arr) {
+			listOfItemsToWithdraw.add(s);
+		}
+	}
+	
+	public void addToListOfItemsToDeposit(String[] arr) {
+		for(String s: arr) {
+			listOfItemsToDeposit.add(s);
+		}
+	}
+
+	public void setListOfItemsToWithdraw(ArrayList<String> listOfItemsToWithdraw) {
+		this.listOfItemsToWithdraw = listOfItemsToWithdraw;
+	}
+
+	public ArrayList<String> getListOfItemsToDeposit() {
+		return listOfItemsToDeposit;
+	}
+
+	public void setLsitOfItemsToDeposit(ArrayList<String> listOfItemsToDeposit) {
+		this.listOfItemsToDeposit = listOfItemsToDeposit;
 	}
 
 	@Override
@@ -47,27 +159,7 @@ public class Bank implements Task {
 		return 0;
 	}
 	
-	@Override
-	public String toString() {
-		return "Bank [itemName=" + itemName + "]";
-	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(itemName);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Bank other = (Bank) obj;
-		return Objects.equals(itemName, other.itemName);
-	}
 	
 			
 

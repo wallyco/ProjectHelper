@@ -2,6 +2,11 @@ package BotAI;
 
 import java.util.Random;
 
+import org.dreambot.api.methods.MethodProvider;
+
+import BotMain.Main;
+
+//TODO MAJOR BUG -- If a break gets reset mid run acceptBreak stays false
 public class FatigueManager { 
 	
 	private static FatigueManager fm = null;
@@ -10,11 +15,12 @@ public class FatigueManager {
 	private static int  ENERGY_LEVEL_RELAXED = 70;
 	private static int  ENERGY_LEVEL_TIRED = 40;
 	private double energy = 100.00;
-	private double resetBreakDouble = 10000000;
-	private double shortBreakDouble = 1000000;
+	private double resetBreakDouble = 10000000;   //10000000
+	private double shortBreakDouble = 1000000; //1000000
 	private int generateResetBreakInt = 3000000;
-	private int shortBreakRecharge = 0;
+	public int shortBreakRecharge = 0;
 	public boolean acceptBreak = true;
+	private int loopCounter = 0;
 	//SAVE 1000000 is ~10-30 mins
 	//SAVE 10000000 is ~1-3 hours
 	private Random dom = new Random();
@@ -22,27 +28,9 @@ public class FatigueManager {
 	 
 	private FatigueManager(FatigueStates fatigue) {
 		this.fatigueState = fatigue;
-		generateEnergyLevelStateThreshholds();
+		generateEnergyLevelStateThresholds();
 	}
 	
-	 //DEBUG
-	public static int getENERGY_LEVEL_RELAXED() {
-		return ENERGY_LEVEL_RELAXED;
-	}
-
-	public static void setENERGY_LEVEL_RELAXED(int eNERGY_LEVEL_RELAXED) {
-		ENERGY_LEVEL_RELAXED = eNERGY_LEVEL_RELAXED;
-	}
-
-	public static int getENERGY_LEVEL_TIRED() {
-		return ENERGY_LEVEL_TIRED;
-	}
-
-	public static void setENERGY_LEVEL_TIRED(int eNERGY_LEVEL_TIRED) {
-		ENERGY_LEVEL_TIRED = eNERGY_LEVEL_TIRED;
-	}
-	/////////////////////////////////////////
-
 	public static FatigueManager getInstance() {
 		if(fm == null) {
 			fm = new FatigueManager(FatigueStates.DEFAULT);
@@ -64,24 +52,55 @@ public class FatigueManager {
 	}
 	
 	public void checkEnergyLevel() {
-		if(getEnergy() <= ENERGY_LEVEL_RELAXED 
-				&& getEnergy() > ENERGY_LEVEL_TIRED 
-				&&!fatigueState.isFatigueState(FatigueStates.RELAXED)) {
-			setFatigueState(FatigueStates.RELAXED);
+		//TODO Rough fix for the reset bug
+		if(Main.ai.getTaskManager().isEmpty()) {
+			this.acceptBreak = true;
 		}
-		else if(getEnergy() <= ENERGY_LEVEL_TIRED && !fatigueState.isFatigueState(FatigueStates.TIRED)) {
+		
+		if(shouldSwitchInputTiming()  &&
+				getEnergy() < 50) {
 			setFatigueState(FatigueStates.TIRED);
+			generateBreakDouble();
+			setEnergy(getEnergy() + shortBreakRecharge);
+		}else if(!fatigueState.isFatigueState(FatigueStates.ENGAGED)){
+			setFatigueState(FatigueStates.ENGAGED);
+
 		}
-		else {
-			if(getEnergy() > ENERGY_LEVEL_RELAXED && !fatigueState.isFatigueState(FatigueStates.ENGAGED)) {
-				setFatigueState(FatigueStates.ENGAGED);
-			}
+		
+	}
+		//TODO Maybe to easy to detect
+//		if(getEnergy() <= ENERGY_LEVEL_RELAXED 
+//				&& getEnergy() > ENERGY_LEVEL_TIRED 
+//				&&!fatigueState.isFatigueState(FatigueStates.RELAXED)) {
+//			setFatigueState(FatigueStates.RELAXED);
+//		}
+//		else if(getEnergy() <= ENERGY_LEVEL_TIRED && !fatigueState.isFatigueState(FatigueStates.TIRED)) {
+//			setFatigueState(FatigueStates.TIRED);
+//		}
+//		else {
+//			if(getEnergy() > ENERGY_LEVEL_RELAXED && !fatigueState.isFatigueState(FatigueStates.ENGAGED)) {
+//				setFatigueState(FatigueStates.ENGAGED);
+//			}
+//		}
+//		
+//		if(getEnergy() <= 0 && loopCounter > 2 && isAcceptBreak()) {
+//			BotMain.Main.ai.getTaskManager().insertAtHeadCopy(new BotDataJPX.Break(((long) generateResetBreakDouble()), 100));//CHANGE TO 100
+//			setEnergy(.5);
+//			generateEnergyLevelStateThresholds();
+//			loopCounter = 0;
+//		}else if(getEnergy() <= 0 && isAcceptBreak()) {
+//			BotMain.Main.ai.getTaskManager().insertAtHeadCopy(new BotDataJPX.Break(((long) generateBreakDouble()), shortBreakRecharge)); //CHANGE TO 100
+//			generateEnergyLevelStateThresholds();
+//			loopCounter++;
+//		}
+//	}
+	
+	public boolean shouldSwitchInputTiming() {
+		double d = dom.nextDouble();
+		if(d > .93) {
+			return true;
 		}
-		if(getEnergy() < 0) {
-			BotMain.Main.ai.getTaskManager().insertAtHeadCopy(new BotDataJPX.Break(((long) generateResetBreakDouble()), 100));
-			setEnergy(.5);
-			generateEnergyLevelStateThreshholds();
-		}
+		return false;
 	}
 	
 	private int generateRandomInputInt(int offset) {
@@ -89,7 +108,6 @@ public class FatigueManager {
 	}
 	
 	private double generateResetBreakDouble() {
-		acceptBreak = true; //here to be called after RESET
 		double d = dom.nextDouble() * this.resetBreakDouble;
 		if(d > generateResetBreakInt)
 			return d;
@@ -100,25 +118,22 @@ public class FatigueManager {
 	
 	public double generateBreakDouble() {
 		double d = dom.nextDouble() * this.shortBreakDouble;
-		double divided = (int) d / 10000;
-		if(divided / 2 - 20 > 0)
-			divided = divided / 2 - 20;
-		else
-			divided /= 2;
+		int divided = generateRandomInputInt(100);
 		this.shortBreakRecharge = (int) divided;
 		return d;
 	}
 
-	private double generateRandomConsumeDouble(double consumeEnergy) {
+	public double generateRandomConsumeDouble(double consumeEnergy) {
 		double temp = dom.nextDouble(); 
-		if(temp - consumeEnergy > 0)
-			return temp - consumeEnergy;
-		return 0.01;
+//		if(temp - consumeEnergy > 0)
+//			return temp - consumeEnergy;
+//		return 0.01;
+		return temp * consumeEnergy;
 	}
 	
-	private void generateEnergyLevelStateThreshholds() {
+	private void generateEnergyLevelStateThresholds() {
 		ENERGY_LEVEL_RELAXED = generateRandomInputInt(80) + 20;
-		ENERGY_LEVEL_TIRED = generateRandomInputInt(40) + 10;
+		ENERGY_LEVEL_TIRED = generateRandomInputInt(55) + 20;
 	}
 	
 	
@@ -137,6 +152,32 @@ public class FatigueManager {
 	public double getEnergy() {
 		return this.energy;
 	}
+	
+	 public boolean isAcceptBreak() {
+		return acceptBreak;
+	}
+
+	public void setAcceptBreak(boolean acceptBreak) {
+		this.acceptBreak = acceptBreak;
+	}
+
+	//DEBUG
+	public static int getENERGY_LEVEL_RELAXED() {
+		return ENERGY_LEVEL_RELAXED;
+	}
+
+	public static void setENERGY_LEVEL_RELAXED(int eNERGY_LEVEL_RELAXED) {
+		ENERGY_LEVEL_RELAXED = eNERGY_LEVEL_RELAXED;
+	}
+
+	public static int getENERGY_LEVEL_TIRED() {
+		return ENERGY_LEVEL_TIRED;
+	}
+
+	public static void setENERGY_LEVEL_TIRED(int eNERGY_LEVEL_TIRED) {
+		ENERGY_LEVEL_TIRED = eNERGY_LEVEL_TIRED;
+	}
+	/////////////////////////////////////////
 	
 	
 

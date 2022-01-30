@@ -89,6 +89,10 @@ public class TaskManager<E extends Task> {
 		}
 	}
 	
+	public boolean isEmpty() {
+		return size() == 0;
+	}
+	
 	public void offer(Task o) {
 		listOfTasks.offer(o);
 	}

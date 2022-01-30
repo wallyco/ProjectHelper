@@ -10,7 +10,6 @@ import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.Player;
 
-import BotAI.FatigueManager;
 import BotMain.Main;
 import Task.Task;
 
@@ -38,18 +37,17 @@ public class Deforester implements Task{
 
 	@Override
 	public double fatigueRate() {
-		return 0.3;
+		return 1.0;
 	}
 	
 	private boolean accept() {
-		
-		if(getTree() != null && getTree().getSurroundingArea(2).contains(player)) {
-			if(getTree().exists())
-				return false;
-		}
-
 		if(Dialogues.canContinue())
 			Dialogues.continueDialogue();
+		
+		
+		if(tree == null) {
+			return true;
+		}
 		
 		if(player.isAnimating() 
 				|| player.isMoving()) {
@@ -73,7 +71,7 @@ public class Deforester implements Task{
 			MethodProvider.sleepUntil(() -> tree.interact("Chop down"), 2500);
 			MethodProvider.sleepUntil(() -> tree.getSurroundingArea(2).contains(player), 500);
 			MethodProvider.sleep(50);
-			FatigueManager.getInstance().consumeEnergy(fatigueRate());
+			fatigueManager.consumeEnergy(fatigueRate());
 			return true;
 		}
 		return false;

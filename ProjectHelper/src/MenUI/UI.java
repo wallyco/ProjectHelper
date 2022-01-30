@@ -9,6 +9,8 @@ import org.dreambot.api.script.ScriptManager;
 
 import BotAI.FatigueManager;
 import BotAI.LevelManager;
+import BotDataJPX.Slayer;
+import BotLocations.Locations;
 import Task.Task;
 import Task.TaskManager;
 
@@ -17,6 +19,7 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
@@ -24,6 +27,7 @@ import javax.swing.JTextPane;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JRadioButton;
+import javax.swing.JComboBox;
 
 
 public class UI{
@@ -33,7 +37,7 @@ public class UI{
 
 	private JTextField textNPCName;
     static TaskManager<Task> taskManager = BotMain.Main.ai.getTaskManager();
-	static LevelManager levelManager = BotMain.Main.ai.getLevelManager();
+    private Locations botLocation;
 	public static JTextPane textLog = new JTextPane();
 	private JRadioButton rdbtnAttachAttack;
 	private JRadioButton rdbtnAttachDeforester;
@@ -121,7 +125,7 @@ public class UI{
 		panelAttack.add(lblNPCName);
 		
 		rdbtnAttachAttack = new JRadioButton("Attach Task {ATTACK}");
-		rdbtnAttachAttack.setBounds(227, 26, 152, 23);
+		rdbtnAttachAttack.setBounds(10, 158, 152, 23);
 		panelAttack.add(rdbtnAttachAttack);
 		
 		textSetAttackLevel = new JTextField();
@@ -154,15 +158,43 @@ public class UI{
 		lblNewLabel_4.setBounds(65, 123, 114, 14);
 		panelAttack.add(lblNewLabel_4);
 		
+		
+		//Slayer
+		
+		JRadioButton rdbtnAttachSlayer = new JRadioButton("Attach Task {SLAYER}");
+		rdbtnAttachSlayer.setBounds(287, 57, 152, 23);
+		panelAttack.add(rdbtnAttachSlayer);
+		
+		JComboBox comboBoxSlayerTask = new JComboBox();
+		comboBoxSlayerTask.setBounds(265, 26, 174, 22);
+		panelAttack.add(comboBoxSlayerTask);
+		
+		comboBoxSlayerTask.addItem((Locations) BotLocations.Lumbridge.COMBAT_COWS_SMALLFIELD);
+		comboBoxSlayerTask.addItem((Locations) BotLocations.Lumbridge.COMBAT_GOBLIN_FIELDS);
+		
+
+		
+		rdbtnAttachSlayer.addActionListener(new ActionListener() {
+			
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				botLocation = (Locations) comboBoxSlayerTask.getSelectedItem();
+				
+				if(rdbtnAttachSlayer.isSelected()) {
+					taskManager.add(new BotDataJPX.Slayer(botLocation.npcName(), botLocation.area())); 
+
+				}
+			}
+		});
+		
 		rdbtnAttachAttack.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(rdbtnAttachAttack.isSelected()) {
 					taskManager.add(new BotDataJPX.Attack(textNPCName.getText().trim())); 
-					levelManager.setLevelAttackTo(Integer.parseInt(textSetAttackLevel.getText().trim()));
-					levelManager.setLevelStrengthTo(Integer.parseInt(textSetStrengthLevel.getText().trim()));
-					levelManager.setLevelDefenceTo(Integer.parseInt(textSetDefenceLevel.getText().trim()));
+
 				}
 			}
 		});
@@ -202,6 +234,44 @@ public class UI{
 		textBankItem.setBounds(26, 52, 86, 20);
 		panelDeforester.add(textBankItem);
 		textBankItem.setColumns(10);
+		
+		/////////////////////////////////////////////////////
+		
+		////////FISHING TAB
+		
+		JPanel panelFishing = new JPanel();
+		tabbedPane.addTab("Fishing", null, panelFishing, null);
+		panelFishing.setLayout(null);
+		
+		
+		JRadioButton rdbtnAttachFishing = new JRadioButton("Attach Task {FISHING}");
+		rdbtnAttachFishing.setBounds(312, 46, 142, 23);
+		panelFishing.add(rdbtnAttachFishing);
+		
+		JComboBox<Locations> comboBoxFishingLocation = new JComboBox<>();
+		comboBoxFishingLocation.setBounds(312, 11, 131, 22);
+		panelFishing.add(comboBoxFishingLocation);
+		
+		comboBoxFishingLocation.addItem(BotLocations.Lumbridge.FISHING_SWAMPS);
+
+		
+		rdbtnAttachFishing.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				botLocation = (Locations) comboBoxFishingLocation.getSelectedItem();
+				if(rdbtnAttachFishing.isSelected()) {
+					//TODO SPLIT UP THE LOCATION ENUM
+					String[] arr = {"Raw herring", "Raw sardine"};
+					taskManager.add(new BotDataJPX.Fishing(botLocation.npcName(), botLocation.interaction(), arr, botLocation.area()));
+					 
+				}
+			}
+			
+		});
+		
+		/////////////////
+		////DEV
 		
 		JPanel panelDev = new JPanel();
 		tabbedPane.addTab("Dev Tab", null, panelDev, null);
@@ -291,8 +361,6 @@ public class UI{
 		textLog.setText(textLog.getText() + "\n" + FatigueManager.getInstance().getFatigueState());
 		textLog.setText(textLog.getText() + "\n" + FatigueManager.getENERGY_LEVEL_RELAXED());
 		textLog.setText(textLog.getText() + "\n" + FatigueManager.getENERGY_LEVEL_TIRED());
-
-		textLog.setText(textLog.getText() + "\n" + levelManager);
 	}
 	
 	public void deselectRDBTN() {
