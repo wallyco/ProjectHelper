@@ -15,6 +15,7 @@ import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location;
 
 import BotAI.AI;
 import BotAI.FatigueManager;
+import BotLocations.Fishing;
 import BotLocations.Locations;
 import MenUI.UI;
 
@@ -45,6 +46,7 @@ public class Main extends AbstractScript{
 		//PAUSE HERE AND ADD A STATIC VALUE TO ENERGYLEVEL UI
 		if(firstrun) {
 			ScriptManager.getScriptManager().pause();
+			ai.getTaskManager().add(new BotDataJPX.Deforester(BotLocations.WoodCutting.VARROCK_EAST_TREE));
 			firstrun = false;
 		}else {
 			ai.act();

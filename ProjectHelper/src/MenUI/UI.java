@@ -10,7 +10,9 @@ import org.dreambot.api.script.ScriptManager;
 import BotAI.FatigueManager;
 import BotAI.LevelManager;
 import BotDataJPX.Slayer;
+import BotLocations.Fishing;
 import BotLocations.Locations;
+import BotLocations.Skilling;
 import Task.Task;
 import Task.TaskManager;
 
@@ -169,8 +171,8 @@ public class UI{
 		comboBoxSlayerTask.setBounds(265, 26, 174, 22);
 		panelAttack.add(comboBoxSlayerTask);
 		
-		comboBoxSlayerTask.addItem((Locations) BotLocations.Lumbridge.COMBAT_COWS_SMALLFIELD);
-		comboBoxSlayerTask.addItem((Locations) BotLocations.Lumbridge.COMBAT_GOBLIN_FIELDS);
+		comboBoxSlayerTask.addItem(BotLocations.Combat.LUMBRIDGE_GOBLIN_BARN);
+		comboBoxSlayerTask.addItem(BotLocations.Combat.LUMBRIDGE_COW_SMALL_FIELD);
 		
 
 		
@@ -182,7 +184,7 @@ public class UI{
 				botLocation = (Locations) comboBoxSlayerTask.getSelectedItem();
 				
 				if(rdbtnAttachSlayer.isSelected()) {
-					taskManager.add(new BotDataJPX.Slayer(botLocation.npcName(), botLocation.area())); 
+					taskManager.add(new BotDataJPX.Slayer((BotLocations.Combat) botLocation)); 
 
 				}
 			}
@@ -248,22 +250,22 @@ public class UI{
 		rdbtnAttachFishing.setBounds(312, 46, 142, 23);
 		panelFishing.add(rdbtnAttachFishing);
 		
-		JComboBox<Locations> comboBoxFishingLocation = new JComboBox<>();
-		comboBoxFishingLocation.setBounds(312, 11, 131, 22);
+		JComboBox<Skilling> comboBoxFishingLocation = new JComboBox<>();
+		comboBoxFishingLocation.setBounds(274, 11, 169, 22);
 		panelFishing.add(comboBoxFishingLocation);
 		
-		comboBoxFishingLocation.addItem(BotLocations.Lumbridge.FISHING_SWAMPS);
+		comboBoxFishingLocation.addItem(BotLocations.Fishing.LUMBRIDGE_SWAMPS_NET);
+		comboBoxFishingLocation.addItem(BotLocations.Fishing.LUMBRIDGE_SWAMPS_BAIT);
+
 
 		
 		rdbtnAttachFishing.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				botLocation = (Locations) comboBoxFishingLocation.getSelectedItem();
+				botLocation = (Fishing) comboBoxFishingLocation.getSelectedItem();
 				if(rdbtnAttachFishing.isSelected()) {
-					//TODO SPLIT UP THE LOCATION ENUM
-					String[] arr = {"Raw herring", "Raw sardine"};
-					taskManager.add(new BotDataJPX.Fishing(botLocation.npcName(), botLocation.interaction(), arr, botLocation.area()));
+					taskManager.add(new BotDataJPX.Fishing((Fishing) botLocation));
 					 
 				}
 			}

@@ -18,17 +18,25 @@ public class Fishing implements Task{
 	private String fishinSpotName;
 	private String fishingMethod;
 	private ArrayList<String> depositItems = new ArrayList<>();
+	private ArrayList<String> fishingEquipment = new ArrayList<>();
 	private Area botArea;
 	public Fishing() { }
 	
-	public Fishing(String fishinSpotName, String fishingMethod, String[] depositItems, Area area) {
-		this.fishinSpotName = fishinSpotName;
-		this.fishingMethod = fishingMethod;
-		this.botArea = area;
-		for(String s : depositItems) {
-			this.depositItems.add(s);
+	public Fishing(BotLocations.Fishing info) {
+		this.fishingMethod = info.getInteract();
+		for(String s : info.getDepositItems()) {
+			depositItems.add(s);
 		}
+		
+		for(String s: info.getEquipment()) {
+			fishingEquipment.add(s);
+		}
+		
+		this.botArea = info.getArea();
+		
+		this.fishinSpotName = info.getName();
 	}
+	
 	
 	@Override
 	public boolean execute() {

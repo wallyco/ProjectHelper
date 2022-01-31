@@ -19,15 +19,25 @@ public class Slayer implements Task{
 	private int numberOfKills = 0;
 	private int numberOfKillsToObtain;
 	private Area botArea;
+	private String interact = "Attack";
 	private Random dom = new Random();
 	
-	public Slayer() {}
-	
-	public Slayer(String npcName, Area area) {
-		this.npcName = npcName;
-		this.botArea = area;
+	public Slayer() {
 		setNumberOfKillsToObtain(generateMonsterKills());
 		levelManager.setNumberOfKillsToObtain(getNumberOfKillsToObtain());
+	}
+	
+	public Slayer(String npcName, Area area) {
+		this();
+		this.npcName = npcName;
+		this.botArea = area;
+	}
+	
+	public Slayer(BotLocations.Combat info) {
+		this();
+		this.npcName = info.getNpcName();
+		this.botArea = info.getArea();
+		this.interact = info.getInteract();
 	}
 	
 	@Override
@@ -76,7 +86,7 @@ public class Slayer implements Task{
                 && !getNpc().isInCombat()
                 && getNpc().canReach())
         {
-            MethodProvider.sleepUntil(() -> getNpc().interact("Attack"), 1000);
+            MethodProvider.sleepUntil(() -> getNpc().interact(interact), 1000);
             MethodProvider.sleepWhile(() -> Players.localPlayer().isAnimating(), 3000);
             setNumberOfKills(getNumberOfKills() + 1);
             return true;

@@ -1,5 +1,6 @@
 package BotDataJPX;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import org.dreambot.api.methods.MethodProvider;
@@ -7,6 +8,7 @@ import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.Players;
+import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.Player;
 
@@ -18,15 +20,25 @@ public class Deforester implements Task{
 	private GameObject tree;
 	private String treeName;
 	private Player player = Players.localPlayer();
-	private String DEPOSIT_ITEM;
+	private ArrayList<String> depositItems = new ArrayList<>();
+	private Area area;
 	
 	public Deforester() {}
 	
 	public Deforester(String treeName, String depositItem) {
 		this.treeName = treeName;
-		this.DEPOSIT_ITEM = depositItem;
+		depositItems.add(depositItem);
 	}
-
+	
+	public Deforester(BotLocations.WoodCutting info) {
+		this.treeName = info.getName();
+		for(String s: info.getDepositItems()) {
+			depositItems.add(s);
+		}
+		
+		this.area = info.getArea();
+		
+	}
 	@Override
 	public boolean execute() {
 		if(accept()) {
@@ -58,7 +70,7 @@ public class Deforester implements Task{
 		}
 		
 		if(Inventory.isFull()) {
-			Main.ai.getTaskManager().insertAtHeadCopy(new Bank(DEPOSIT_ITEM));
+			Main.ai.getTaskManager().insertAtHeadCopy(new Bank(depositItems));
 			return false;
 		}
 		
@@ -88,7 +100,7 @@ public class Deforester implements Task{
 		if(tree != null) {
 			this.tree = tree;
 		}else {
-			//Main.ai.getTaskManager().insertAtHeadCopy(new Walk(Players.localPlayer().getSurroundingArea(11).getRandomTile().getArea(2)));
+			Main.ai.getTaskManager().insertAtHeadCopy(new Walk(area));
 		}
 	}
 
