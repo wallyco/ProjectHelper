@@ -383,6 +383,7 @@ public class UI{
 		textLog.setText(textLog.getText() + "\n" + FatigueManager.getInstance().getFatigueState());
 		textLog.setText(textLog.getText() + "\n" + FatigueManager.getENERGY_LEVEL_RELAXED());
 		textLog.setText(textLog.getText() + "\n" + FatigueManager.getENERGY_LEVEL_TIRED());
+		textLog.setText(textLog.getText() + "\n" + levelManager);
 	}
 	
 	public void deselectRDBTN() {

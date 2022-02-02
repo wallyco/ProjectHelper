@@ -160,7 +160,7 @@ public class Slayer implements Task{
 
 	@Override
 	public String toString() {
-		return "Slayer [npcName=" + npcName + "\n" + levelManager + "]";
+		return "Slayer [npcName=" + npcName + "]";
 	}
 
 

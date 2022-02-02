@@ -35,10 +35,10 @@ public class Bank implements Task {
 		}
 	}
 	
-	public Bank(String[] name) {
-		for(String e: name) {
+	public Bank(Object[] name) {
+		for(Object e: name) {
 			MethodProvider.log("adding");
-			this.listOfItemsToDeposit.add(e);
+			this.listOfItemsToDeposit.add((String) e);
 		}
 	}
 	public Bank(boolean method, String itemName) {

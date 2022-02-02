@@ -8,7 +8,8 @@ public class AI {
 	private TaskManager<Task> taskManager = new TaskManager<>();
 	private HealthManager healthManager = new HealthManager(true);
 	private LevelManager levelManager = new LevelManager();
-	
+	private EquipmentManager equipmentManager = new EquipmentManager();
+
 	//Handle values in constructors and overload AI constructor
 	public AI() {}
 	
@@ -41,10 +42,8 @@ public class AI {
 	public void setLevelManager(LevelManager levelManager) {
 		this.levelManager = levelManager;
 	}
-	
-	
-	
-	
-	
 
+	public EquipmentManager getEquipmentManager() { return equipmentManager;
+	}
+	public void setEquipmentManager(EquipmentManager equipmentManager) {this.equipmentManager = equipmentManager; }
 }

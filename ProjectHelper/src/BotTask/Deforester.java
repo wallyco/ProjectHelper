@@ -116,7 +116,7 @@ public class Deforester implements Task, ChatListener{
 
 	@Override
 	public String toString() {
-		return "Deforester [treeName=" + treeName + "\n" + levelManager + "]";
+		return "Deforester [treeName=" + treeName + "]";
 	}
 
 	@Override

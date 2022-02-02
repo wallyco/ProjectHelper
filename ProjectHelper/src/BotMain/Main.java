@@ -13,8 +13,6 @@ import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.script.listener.ChatListener;
 import org.dreambot.api.wrappers.widgets.message.Message;
 
-import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location;
-
 import BotAI.AI;
 import BotAI.FatigueManager;
 import BotAI.LevelManager;
@@ -33,7 +31,10 @@ implements ChatListener {
 	
 	@Override
 	public void onStart() {
+		//TODO MOVE THEM TO LEVELMANAGER
 		ScriptManager.getScriptManager().addListener(new Deforester());
+		ScriptManager.getScriptManager().addListener(new BotTask.Fishing());
+
 		timeBegan = System.currentTimeMillis();
 		MethodProvider.log("Loading gui");
 		EventQueue.invokeLater(new Runnable() {
