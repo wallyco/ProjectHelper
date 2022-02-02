@@ -1,7 +1,6 @@
-package BotDataJPX;
+package BotTask;
 
 import java.util.Objects;
-import java.util.Random;
 
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.dialogues.Dialogues;
@@ -12,6 +11,7 @@ import org.dreambot.api.wrappers.interactive.NPC;
 
 import Task.Task;
 
+//TODO ADJUST random ints generated for monster kills 0 is possible
 
 public class Slayer implements Task{
 	private NPC npc;
@@ -20,21 +20,17 @@ public class Slayer implements Task{
 	private int numberOfKillsToObtain;
 	private Area botArea;
 	private String interact = "Attack";
-	private Random dom = new Random();
+	private boolean firstrun = true;
 	
 	public Slayer() {
-		setNumberOfKillsToObtain(generateMonsterKills());
-		levelManager.setNumberOfKillsToObtain(getNumberOfKillsToObtain());
 	}
 	
 	public Slayer(String npcName, Area area) {
-		this();
 		this.npcName = npcName;
 		this.botArea = area;
 	}
 	
 	public Slayer(BotLocations.Combat info) {
-		this();
 		this.npcName = info.getNpcName();
 		this.botArea = info.getArea();
 		this.interact = info.getInteract();
@@ -48,7 +44,10 @@ public class Slayer implements Task{
 	
 	@Override
 	public boolean execute() {
-		levelManager.setNumberOfKills(getNumberOfKills());
+		if(firstrun) {
+			levelManager.resetActionCount(25);
+			firstrun = false;
+		}
 		if(!levelManager.continueSlaying()) {
 			return false;
 		}
@@ -86,31 +85,32 @@ public class Slayer implements Task{
                 && !getNpc().isInCombat()
                 && getNpc().canReach())
         {
-            MethodProvider.sleepUntil(() -> getNpc().interact(interact), 1000);
-            MethodProvider.sleepWhile(() -> Players.localPlayer().isAnimating(), 3000);
-            setNumberOfKills(getNumberOfKills() + 1);
+            MethodProvider.sleepUntil(() -> getNpc().interact(interact), 500);	
+            levelManager.increaseActionCount();
             return true;
         }
         return false;
     }
 	
-	private int generateMonsterKills() {
-		double d = dom.nextDouble() * 100;
-		MethodProvider.log(d);
-		return (int) d;
-	}
+
 	
 	
     public void setNPC(NPC npc) {
-        npc = NPCs.closest(n ->
-            n.getName().equals(this.npcName) 
-            && n != null 
-            && !n.isInCombat());
-        MethodProvider.sleep(50);
-        this.npc = npc;
-        if(this.npc == null) {
-        	BotMain.Main.ai.getTaskManager().insertAtHeadCopy(new Walk(this.botArea));
-        }
+    	if(player.isInteractedWith()) {
+        	npc = NPCs.closest(e -> e.isInteracting(player));
+        	this.npc = npc;
+    	}else {
+	        npc = NPCs.closest(n ->
+	            n.getName().equals(this.npcName) 
+	            && n != null 
+	            && !n.isInCombat());
+	        MethodProvider.sleep(50);
+	        this.npc = npc;
+	        
+	        if(this.npc == null) {
+	        	BotMain.Main.ai.getTaskManager().insertAtHeadCopy(new Walk(this.botArea));
+	        }
+    	}
     }
 	
 		
@@ -160,8 +160,7 @@ public class Slayer implements Task{
 
 	@Override
 	public String toString() {
-		return "Slayer [npcName=" + npcName + ", numberOfKills=" + numberOfKills + ", numberOfKillsToObtain="
-				+ numberOfKillsToObtain + "]";
+		return "Slayer [npcName=" + npcName + "\n" + levelManager + "]";
 	}
 
 

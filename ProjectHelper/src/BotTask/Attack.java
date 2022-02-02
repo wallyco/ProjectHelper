@@ -1,4 +1,4 @@
-package BotDataJPX;
+package BotTask;
 
 import java.util.Objects;
 

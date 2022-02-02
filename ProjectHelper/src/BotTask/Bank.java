@@ -1,4 +1,4 @@
-package BotDataJPX;
+package BotTask;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -76,12 +76,12 @@ public class Bank implements Task {
 			return true;
 		}else if(bankingMethod) {
 			if(depositAll()) {
-				Main.ai.getTaskManager().insertBehindHead(new BotDataJPX.Walk(returnTile.getArea(5)));
+				Main.ai.getTaskManager().insertBehindHead(new BotTask.Walk(returnTile.getArea(5)));
 				return false;
 			}
 		}else {
 			if(withdrawAll()) {;
-				Main.ai.getTaskManager().insertBehindHead(new BotDataJPX.Walk(returnTile.getArea(5)));
+				Main.ai.getTaskManager().insertBehindHead(new BotTask.Walk(returnTile.getArea(5)));
 				return false;
 			}
 		}
@@ -90,7 +90,6 @@ public class Bank implements Task {
 	}
 	
 	public boolean depositAll() {
-		MethodProvider.log(getListOfItemsToDeposit());
 		if(Inventory.contains(getListOfItemsToDeposit().get(0).toString())) {
 			if(bankTile.getArea(10).contains(player) && !org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
 				org.dreambot.api.methods.container.impl.bank.Bank.open();

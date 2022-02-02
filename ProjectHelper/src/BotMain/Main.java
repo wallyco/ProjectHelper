@@ -10,17 +10,22 @@ import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManager;
 import org.dreambot.api.script.ScriptManifest;
+import org.dreambot.api.script.listener.ChatListener;
+import org.dreambot.api.wrappers.widgets.message.Message;
 
 import com.google.protobuf.DescriptorProtos.SourceCodeInfo.Location;
 
 import BotAI.AI;
 import BotAI.FatigueManager;
+import BotAI.LevelManager;
 import BotLocations.Fishing;
 import BotLocations.Locations;
+import BotTask.Deforester;
 import MenUI.UI;
 
 @ScriptManifest(author = "JPX", category = Category.UTILITY, name = "ProjectHelper", version = 0.1)
-public class Main extends AbstractScript{
+public class Main extends AbstractScript
+implements ChatListener {
 	private UI gui = new UI();
 	public static AI ai = new AI();
 	private boolean firstrun = true;
@@ -28,6 +33,7 @@ public class Main extends AbstractScript{
 	
 	@Override
 	public void onStart() {
+		ScriptManager.getScriptManager().addListener(new Deforester());
 		timeBegan = System.currentTimeMillis();
 		MethodProvider.log("Loading gui");
 		EventQueue.invokeLater(new Runnable() {
@@ -46,7 +52,6 @@ public class Main extends AbstractScript{
 		//PAUSE HERE AND ADD A STATIC VALUE TO ENERGYLEVEL UI
 		if(firstrun) {
 			ScriptManager.getScriptManager().pause();
-			ai.getTaskManager().add(new BotDataJPX.Deforester(BotLocations.WoodCutting.VARROCK_EAST_TREE));
 			firstrun = false;
 		}else {
 			ai.act();
@@ -93,5 +98,8 @@ public class Main extends AbstractScript{
 		
 	return res;
 	}
+	
+
+	
 	
 }

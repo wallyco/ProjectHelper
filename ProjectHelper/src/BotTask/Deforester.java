@@ -1,4 +1,4 @@
-package BotDataJPX;
+package BotTask;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -9,21 +9,23 @@ import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.GameObjects;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
+import org.dreambot.api.script.listener.ChatListener;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.Player;
+import org.dreambot.api.wrappers.widgets.message.Message;
 
 import BotMain.Main;
 import Task.Task;
 
-public class Deforester implements Task{
+public class Deforester implements Task, ChatListener{
 //TODO Add consume
 	private GameObject tree;
 	private String treeName;
 	private Player player = Players.localPlayer();
 	private ArrayList<String> depositItems = new ArrayList<>();
 	private Area area;
-	
 	public Deforester() {}
+	private boolean firstrun = true;
 	
 	public Deforester(String treeName, String depositItem) {
 		this.treeName = treeName;
@@ -41,10 +43,14 @@ public class Deforester implements Task{
 	}
 	@Override
 	public boolean execute() {
+		if(firstrun) {
+			levelManager.resetActionCount(136);
+			firstrun = false;
+		}
 		if(accept()) {
 			woodcut();
 		}
-		return true;
+		return levelManager.continueLevelingWoodcutting();
 	}
 
 	@Override
@@ -81,9 +87,13 @@ public class Deforester implements Task{
 		setTree(tree);
 		if(tree != null) {
 			MethodProvider.sleepUntil(() -> tree.interact("Chop down"), 2500);
+
 			MethodProvider.sleepUntil(() -> tree.getSurroundingArea(2).contains(player), 500);
 			MethodProvider.sleep(50);
 			fatigueManager.consumeEnergy(fatigueRate());
+			if(player.isStandingStill()) {
+				Main.ai.getTaskManager().insertAtHeadCopy(new Walk(area));
+			}
 			return true;
 		}
 		return false;
@@ -96,7 +106,7 @@ public class Deforester implements Task{
 	public void setTree(GameObject tree) {
 		tree = GameObjects.closest(t -> t != null 
 				&& t.getName().equals(treeName) 
-				&& t.canReach());
+				&& player.canReach());
 		if(tree != null) {
 			this.tree = tree;
 		}else {
@@ -106,7 +116,7 @@ public class Deforester implements Task{
 
 	@Override
 	public String toString() {
-		return "Deforester [treeName=" + treeName + "]";
+		return "Deforester [treeName=" + treeName + "\n" + levelManager + "]";
 	}
 
 	@Override
@@ -125,5 +135,12 @@ public class Deforester implements Task{
 		Deforester other = (Deforester) obj;
 		return Objects.equals(treeName, other.treeName);
 	}
+	
+	@Override
+    public void onMessage(Message message) {
+        if (message.getMessage().contains("You get some logs")) {
+        	levelManager.increaseActionCount();
+        }
+    }
 	
 }

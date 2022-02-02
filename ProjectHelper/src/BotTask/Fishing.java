@@ -1,4 +1,4 @@
-package BotDataJPX;
+package BotTask;
 
 import java.util.ArrayList;
 
@@ -12,6 +12,7 @@ import org.dreambot.api.wrappers.interactive.NPC;
 import BotAI.FatigueManager;
 import BotMain.Main;
 import Task.Task;
+//TODO Reconfigure getFishingSpot to no throw error
 
 public class Fishing implements Task{
 	private NPC fishingSpot;
@@ -21,6 +22,7 @@ public class Fishing implements Task{
 	private ArrayList<String> fishingEquipment = new ArrayList<>();
 	private Area botArea;
 	public Fishing() { }
+	private boolean firstrun = true;
 	
 	public Fishing(BotLocations.Fishing info) {
 		this.fishingMethod = info.getInteract();
@@ -40,6 +42,10 @@ public class Fishing implements Task{
 	
 	@Override
 	public boolean execute() {
+		if(firstrun) {
+			levelManager.resetActionCount(116);
+			firstrun = false;
+		}
 		if(shouldFish()) {
 			fish();
 		}

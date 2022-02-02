@@ -8,14 +8,15 @@ import org.dreambot.api.methods.map.Tile;
 //AREA TEAM CAPE EDMOND TRADE, Team-18 cape 3081, 3810, 0 LARGE AREA
 //AREA Draynor Willow cutting / Small Net , Bait Fishing 3084, 3240,0 small area level ~15
 
-//TODO Add a method to test whether the level requirment is to high
+//TODO Add a method to test whether the level requirement is to high
 
 
 public enum Lumbridge implements Locations{//npc name, interactions1, string for interact two or bank item,
 	
 	SWAMPS_SKILLING(3241, 3168, 0, 0),
 	GOBLIN_BARN(3146, 3303, 0, 10),
-	COWS_SMALLFIELD(3199, 3289, 0, 15);
+	COWS_SMALLFIELD(3199, 3289, 0, 15),
+	CHICKEN_LARGEFIELD(3178, 3293, 0, 0);
 	
 	
 	Lumbridge(int tile1, int tile2, int zaxis, int combatLevel) {

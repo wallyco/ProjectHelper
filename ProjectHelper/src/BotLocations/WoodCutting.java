@@ -4,7 +4,7 @@ import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.methods.map.Tile;
 
 public enum WoodCutting implements Skilling, Locations{
-	VARROCK_EAST_TREE(new Tile(3278, 3446, 0).getArea(5), new String[] {"Axe"}, new String[] {"Logs"}, "Tree" , "Chop down");
+	VARROCK_EAST_TREE(new Tile(3276, 3475, 0).getArea(5), new String[] {"Axe"}, new String[] {"Logs"}, "Tree" , "Chop down");
 	
 	WoodCutting(Area area, String[] equipment, String[] deposit, String objectName, String interact){
 		this.area = area;

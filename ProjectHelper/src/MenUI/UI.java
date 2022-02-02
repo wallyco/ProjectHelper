@@ -9,10 +9,12 @@ import org.dreambot.api.script.ScriptManager;
 
 import BotAI.FatigueManager;
 import BotAI.LevelManager;
-import BotDataJPX.Slayer;
 import BotLocations.Fishing;
 import BotLocations.Locations;
 import BotLocations.Skilling;
+import BotLocations.WoodCutting;
+import BotMain.Main;
+import BotTask.Slayer;
 import Task.Task;
 import Task.TaskManager;
 
@@ -38,7 +40,8 @@ public class UI{
 
 
 	private JTextField textNPCName;
-    static TaskManager<Task> taskManager = BotMain.Main.ai.getTaskManager();
+    static TaskManager<Task> taskManager = Main.ai.getTaskManager();
+    private LevelManager levelManager = Main.ai.getLevelManager();
     private Locations botLocation;
 	public static JTextPane textLog = new JTextPane();
 	private JRadioButton rdbtnAttachAttack;
@@ -167,13 +170,14 @@ public class UI{
 		rdbtnAttachSlayer.setBounds(287, 57, 152, 23);
 		panelAttack.add(rdbtnAttachSlayer);
 		
-		JComboBox comboBoxSlayerTask = new JComboBox();
+		JComboBox<Locations> comboBoxSlayerTask = new JComboBox<>();
 		comboBoxSlayerTask.setBounds(265, 26, 174, 22);
 		panelAttack.add(comboBoxSlayerTask);
 		
 		comboBoxSlayerTask.addItem(BotLocations.Combat.LUMBRIDGE_GOBLIN_BARN);
-		comboBoxSlayerTask.addItem(BotLocations.Combat.LUMBRIDGE_COW_SMALL_FIELD);
-		
+		comboBoxSlayerTask.addItem(BotLocations.Combat.LUMBRIDGE_COW_SMALLFIELD);
+		comboBoxSlayerTask.addItem(BotLocations.Combat.LUMBRIDGE_CHICKEN_LARGEFIELD);
+
 
 		
 		rdbtnAttachSlayer.addActionListener(new ActionListener() {
@@ -184,7 +188,7 @@ public class UI{
 				botLocation = (Locations) comboBoxSlayerTask.getSelectedItem();
 				
 				if(rdbtnAttachSlayer.isSelected()) {
-					taskManager.add(new BotDataJPX.Slayer((BotLocations.Combat) botLocation)); 
+					taskManager.add(new BotTask.Slayer((BotLocations.Combat) botLocation)); 
 
 				}
 			}
@@ -195,7 +199,7 @@ public class UI{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(rdbtnAttachAttack.isSelected()) {
-					taskManager.add(new BotDataJPX.Attack(textNPCName.getText().trim())); 
+					taskManager.add(new BotTask.Attack(textNPCName.getText().trim())); 
 
 				}
 			}
@@ -214,15 +218,23 @@ public class UI{
 		textTreeName.setColumns(10);
 		
 		rdbtnAttachDeforester = new JRadioButton("Attach Task {DEFORESTER}");
-		rdbtnAttachDeforester.setBounds(311, 27, 161, 23);
+		rdbtnAttachDeforester.setBounds(312, 70, 161, 23);
 		panelDeforester.add(rdbtnAttachDeforester);
 		
+		JComboBox<Locations> comboBoxWoodcuttingLocations = new JComboBox<>();
+		comboBoxWoodcuttingLocations.setBounds(301, 27, 172, 22);
+		panelDeforester.add(comboBoxWoodcuttingLocations);
+		
+		comboBoxWoodcuttingLocations.addItem(BotLocations.WoodCutting.VARROCK_EAST_TREE);
+		
 		rdbtnAttachDeforester.addActionListener(new ActionListener() {
-
+			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				botLocation = (Locations) comboBoxWoodcuttingLocations.getSelectedItem();
+
 				if(rdbtnAttachDeforester.isSelected()) {
-					taskManager.add(new BotDataJPX.Deforester(textTreeName.getText().trim(), textBankItem.getText())); 
+					taskManager.add(new BotTask.Deforester((WoodCutting) botLocation)); 
 				}
 			}
 			
@@ -236,6 +248,7 @@ public class UI{
 		textBankItem.setBounds(26, 52, 86, 20);
 		panelDeforester.add(textBankItem);
 		textBankItem.setColumns(10);
+
 		
 		/////////////////////////////////////////////////////
 		
@@ -254,6 +267,7 @@ public class UI{
 		comboBoxFishingLocation.setBounds(274, 11, 169, 22);
 		panelFishing.add(comboBoxFishingLocation);
 		
+		
 		comboBoxFishingLocation.addItem(BotLocations.Fishing.LUMBRIDGE_SWAMPS_NET);
 		comboBoxFishingLocation.addItem(BotLocations.Fishing.LUMBRIDGE_SWAMPS_BAIT);
 
@@ -265,7 +279,7 @@ public class UI{
 			public void actionPerformed(ActionEvent e) {
 				botLocation = (Fishing) comboBoxFishingLocation.getSelectedItem();
 				if(rdbtnAttachFishing.isSelected()) {
-					taskManager.add(new BotDataJPX.Fishing((Fishing) botLocation));
+					taskManager.add(new BotTask.Fishing((Fishing) botLocation));
 					 
 				}
 			}
@@ -312,6 +326,12 @@ public class UI{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				FatigueManager.getInstance().setEnergy(Double.parseDouble(textSetEnergy.getText()));
+				
+				levelManager.setLevelAttackTo(Integer.parseInt(textSetAttackLevel.getText()));
+				levelManager.setLevelStrengthTo(Integer.parseInt(textSetStrengthLevel.getText()));
+				levelManager.setLevelDefenceTo(Integer.parseInt(textSetDefenceLevel.getText()));
+
+
 				ScriptManager.getScriptManager().resume();
 				btnPause.setEnabled(true);
 				btnUpdate.setEnabled(false);

@@ -27,7 +27,7 @@ public class HealthManager {
 		generateIntToEat();
 		checkShouldRun();
 		if(shouldRun && getHitpoints() <= thresholdToRun && foodIsRequired && !isInsertCalled && Players.localPlayer().isInCombat()) {
-			BotMain.Main.ai.getTaskManager().insertAtHeadDelete(new BotDataJPX.Walk(BankLocation.GRAND_EXCHANGE.getArea(5)));
+			BotMain.Main.ai.getTaskManager().insertAtHeadDelete(new BotTask.Walk(BankLocation.GRAND_EXCHANGE.getArea(5)));
 			isInsertCalled = true;
 			return false;
 		}else if(getHitpoints() <= thresholdToEat) {

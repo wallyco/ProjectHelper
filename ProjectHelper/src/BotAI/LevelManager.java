@@ -1,11 +1,15 @@
 package BotAI;
 
+import java.util.Random;
+
 import org.dreambot.api.methods.combat.Combat;
 import org.dreambot.api.methods.combat.CombatStyle;
 import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.skills.Skills;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
+import org.dreambot.api.script.listener.ChatListener;
+import org.dreambot.api.wrappers.widgets.message.Message;
 
 
 public class LevelManager {
@@ -17,13 +21,15 @@ public class LevelManager {
 	private int levelStrengthTo = 0;
 	private int levelDefenceTo = 0;
 	private int levelWoodCuttingTo = 0;
-	private int numberOfKillsToObtain = 0;
-	private int numberOfKills = 0;
+	private int numberOfActionsToObtain = 0;
+	private int numberOfActions = 0;
+	private Random dom = new Random();
+
 	
 	public LevelManager() {}
 	
-	public LevelManager(int numberOfKillsToObtain) {
-		this.numberOfKillsToObtain = numberOfKillsToObtain;
+	public LevelManager(int numberOfActionsToObtain) {
+		this.numberOfActionsToObtain = numberOfActionsToObtain;
 	}
 	
 	
@@ -57,25 +63,28 @@ public class LevelManager {
 	}
 	
 	public boolean continueSlaying() {
-		if(continueLevelingCombat() ||
-			getNumberOfKills() < getNumberOfKillsToObtain()) {
-			return true;
-		}
-		return false;
+		continueLevelingCombat();
+		return (getNumberOfActions() < getNumberOfActionsToObtain());		
 	}
 	
 	public boolean continueLevelingWoodcutting() {
-		getLevels();
-		if(levelWoodCutting < levelWoodCuttingTo
-				&& levelWoodCutting != 0) {
-				return true;
-		}
-		
-		return false;
+		return (getNumberOfActions() < getNumberOfActionsToObtain());
 	}
 	
-	//Break this apart into separate methods
+	public void increaseActionCount() {
+		numberOfActions += 1;
+	}
 	
+	private int generateActionCount(int offset) {
+		double d = dom.nextDouble() * 60 + offset;
+		return (int) d;
+	}
+	
+	public void resetActionCount(int offset) {
+		setNumberOfActionsToObtain(generateActionCount(offset));
+		setNumberOfActions(0);
+	}
+
 	private void getLevels() {
 		this.levelAttack = Skills.getRealLevel(Skill.ATTACK);
 		this.levelStrength = Skills.getRealLevel(Skill.STRENGTH);
@@ -160,32 +169,33 @@ public class LevelManager {
 	}
 
 
-	public int getNumberOfKillsToObtain() {
-		return numberOfKillsToObtain;
+	public int getNumberOfActionsToObtain() {
+		return numberOfActionsToObtain;
 	}
 
 
-	public void setNumberOfKillsToObtain(int numberOfKillsToObtain) {
-		this.numberOfKillsToObtain = numberOfKillsToObtain;
+
+	public int getNumberOfActions() {
+		return numberOfActions;
 	}
 
-
-	public int getNumberOfKills() {
-		return numberOfKills;
+	public void setNumberOfActions(int numberOfActions) {
+		this.numberOfActions = numberOfActions;
 	}
 
-
-	public void setNumberOfKills(int numberOfKills) {
-		this.numberOfKills = numberOfKills;
+	public void setNumberOfActionsToObtain(int numberOfActionsToObtain) {
+		this.numberOfActionsToObtain = numberOfActionsToObtain;
 	}
-
 
 	@Override
 	public String toString() {
 		return "[CurrentAttack =" + levelAttack + ", levelAttackTo=" + levelAttackTo 
 				+ "\nCurrent Strength =" + levelStrength + ", levelStrengthTo =" + levelStrengthTo
-				+ "\nCurrent Defence =" + levelDefence + ", levelDefenceTo =" + levelDefenceTo + "]";
+				+ "\nCurrent Defence =" + levelDefence + ", levelDefenceTo =" + levelDefenceTo 
+				+ "\nCurrent Actions = " + numberOfActions + " : To Obtain = " + numberOfActionsToObtain +"]";
 	}
+	
+
 	
 }
 

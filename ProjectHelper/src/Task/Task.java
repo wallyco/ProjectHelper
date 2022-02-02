@@ -9,7 +9,7 @@ import BotMain.Main;
 
 public interface Task {
 	FatigueManager fatigueManager = FatigueManager.getInstance();
-	LevelManager levelManager = new LevelManager();
+	LevelManager levelManager = Main.ai.getLevelManager();
 	Player player = Players.localPlayer();
 	
 	boolean execute();
