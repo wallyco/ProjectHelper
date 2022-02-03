@@ -4,9 +4,11 @@ import org.dreambot.api.methods.map.Area;
 
 public enum Fishing implements Skilling, Locations {
 	LUMBRIDGE_SWAMPS_NET(Lumbridge.SWAMPS_SKILLING.getArea(), new String[] {"Small fishing net"}, new String[] {"Raw shrimps","Raw anchovies"}, "Net", "Fishing spot"),
-	LUMBRIDGE_SWAMPS_BAIT(Lumbridge.SWAMPS_SKILLING.getArea(), new String[] {"Fishing rod", "Fishing bait"}, new String[] {"Raw herring","Raw sardines"}, "Bait", "Fishing spot");
+	LUMBRIDGE_SWAMPS_BAIT(Lumbridge.SWAMPS_SKILLING.getArea(), new String[] {"Fishing rod", "Fishing bait"}, new String[] {"Raw herring","Raw sardines"}, "Bait", "Fishing spot"),
+	DRAYNOR_VILLAGE_SMALLNET(Lumbridge.DRAYNOR_VILLAGE.getArea(), new String[] {"Small fishing net"}, new String[] {"Raw shrimps","Raw anchovies"}, "Small net", "Fishing spot"),
+	DRAYNOR_VILLAGE_BAIT(Lumbridge.DRAYNOR_VILLAGE.getArea(), new String[] {"Fishing rod", "Fishing bait"}, new String[] {"Raw herring","Raw sardines"}, "Bait", "Fishing spot");
 
-	
+
 	Fishing(Area area, String[] equipment, String[] deposit, String npcInteraction, String fishingSpot){
 		this.area = area;
 		this.equipment = equipment;

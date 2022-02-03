@@ -2,22 +2,18 @@ package BotMain;
 
 import java.awt.EventQueue;
 import java.awt.Graphics;
-import java.lang.reflect.Array;
 import java.util.concurrent.TimeUnit;
 
+import BotTask.Fish;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManager;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.script.listener.ChatListener;
-import org.dreambot.api.wrappers.widgets.message.Message;
 
 import BotAI.AI;
 import BotAI.FatigueManager;
-import BotAI.LevelManager;
-import BotLocations.Fishing;
-import BotLocations.Locations;
 import BotTask.Deforester;
 import MenUI.UI;
 
@@ -33,7 +29,7 @@ implements ChatListener {
 	public void onStart() {
 		//TODO MOVE THEM TO LEVELMANAGER
 		ScriptManager.getScriptManager().addListener(new Deforester());
-		ScriptManager.getScriptManager().addListener(new BotTask.Fishing());
+		ScriptManager.getScriptManager().addListener(new Fish());
 
 		timeBegan = System.currentTimeMillis();
 		MethodProvider.log("Loading gui");

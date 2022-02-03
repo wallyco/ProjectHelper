@@ -5,8 +5,9 @@ import org.dreambot.api.methods.map.Area;
 public enum Combat implements Locations{ // AREA, EQUIPMENT, LOOT, NAME, Interact
 	LUMBRIDGE_GOBLIN_BARN(Lumbridge.GOBLIN_BARN.getArea(), new String[] {null}, new String[] {null}, "Goblin", "Attack"),
 	LUMBRIDGE_COW_SMALLFIELD(Lumbridge.COWS_SMALLFIELD.getArea(), new String[] {null}, new String[] {null}, "Cow", "Attack"),
-	LUMBRIDGE_CHICKEN_LARGEFIELD(Lumbridge.CHICKEN_LARGEFIELD.getArea(), new String[] {null}, new String[] {null}, "Chicken", "Attack");
-	
+	LUMBRIDGE_CHICKEN_LARGEFIELD(Lumbridge.CHICKEN_LARGEFIELD.getArea(), new String[] {null}, new String[] {null}, "Chicken", "Attack"),
+	LUMBRIDGE_COW_LARGEFIELD(Lumbridge.COWS_LARGEFIELD.getArea(), new String[] {null}, new String[] {null}, "Cow", "Attack");
+
 	Combat(Area area, String[] equipment, String[] loot, String npcName, String interact){
 		this.area = area;
 		this.equipment = equipment;

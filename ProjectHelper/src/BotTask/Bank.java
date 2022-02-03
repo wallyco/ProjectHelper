@@ -1,5 +1,6 @@
 package BotTask;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -21,7 +22,7 @@ public class Bank implements Task {
 	private Tile bankTile = org.dreambot.api.methods.container.impl.bank.Bank.getClosestBankLocation().getCenter();
 	private boolean firstrun = true; //TODO TEMP FIX SYNCHRONIZE THE QUEUE
 	private int amount = 0;
-	
+
 	public Bank() {}
 	
 	
@@ -34,11 +35,24 @@ public class Bank implements Task {
 			this.listOfItemsToDeposit.add(s);
 		}
 	}
+
+	public Bank(boolean method){
+		this.bankingMethod = method;
+	}
+
+	public Bank(boolean method, ArrayList<String> list) {
+		this(method);
+		if(!method){
+			for(String s : list) {
+				this.listOfItemsToWithdraw.add(s);
+			}
+		}
+	}
 	
-	public Bank(Object[] name) {
-		for(Object e: name) {
-			MethodProvider.log("adding");
-			this.listOfItemsToDeposit.add((String) e);
+	public Bank(String[] name) {
+		for(String e: name) {
+			MethodProvider.log("adding" + e);
+			this.listOfItemsToDeposit.add(e);
 		}
 	}
 	public Bank(boolean method, String itemName) {
@@ -84,19 +98,22 @@ public class Bank implements Task {
 				Main.ai.getTaskManager().insertBehindHead(new BotTask.Walk(returnTile.getArea(5)));
 				return false;
 			}
+
 		}
 
-		return true;		
+		return false;
 	}
 	
 	public boolean depositAll() {
-		if(Inventory.contains(getListOfItemsToDeposit().get(0).toString())) {
+		if(Inventory.contains(getListOfItemsToDeposit().get(0))) {
 			if(bankTile.getArea(10).contains(player) && !org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
-				org.dreambot.api.methods.container.impl.bank.Bank.open();
+				MethodProvider.sleepUntil(() -> org.dreambot.api.methods.container.impl.bank.Bank.open(), 500);
 			}else if(org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
 				this.listOfItemsToDeposit.stream().forEach(e -> {
-					org.dreambot.api.methods.container.impl.bank.Bank.depositAll(e);
+					MethodProvider.sleepUntil(() -> org.dreambot.api.methods.container.impl.bank.Bank.depositAll(e), 200);
 				});
+				return true;
+			}else{
 				return true;
 			}
 		}
@@ -104,19 +121,23 @@ public class Bank implements Task {
 	}
 	
 	public boolean withdrawAll() {
-		if(!Inventory.contains(getListOfItemsToDeposit().get(0).toString())) {
+		if(!Inventory.contains(getListOfItemsToWithdraw().get(0))) {
 			if(bankTile.getArea(10).contains(player) && !org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
-				org.dreambot.api.methods.container.impl.bank.Bank.open();
+				MethodProvider.sleepUntil(() -> org.dreambot.api.methods.container.impl.bank.Bank.open(), 500);
 			}else if(org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
 				this.listOfItemsToWithdraw.stream().forEach(e -> {
-					org.dreambot.api.methods.container.impl.bank.Bank.withdrawAll(e);
+					MethodProvider.sleepUntil(() -> org.dreambot.api.methods.container.impl.bank.Bank.withdrawAll(e), 200);
 				});
 				return true;
 			}
+		}else {
+			return true;
 		}
 		return false;
 	}
-	
+
+
+
 //	public boolean withdraw(int amount) {
 //		if(bankTile.getArea(10).contains(player) && !org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
 //			org.dreambot.api.methods.container.impl.bank.Bank.open();
@@ -138,6 +159,10 @@ public class Bank implements Task {
 		for(String s: arr) {
 			listOfItemsToDeposit.add(s);
 		}
+	}
+
+	public ArrayList<String> getListOfItemsToWithdraw(){
+		return listOfItemsToWithdraw;
 	}
 
 	public void setListOfItemsToWithdraw(ArrayList<String> listOfItemsToWithdraw) {

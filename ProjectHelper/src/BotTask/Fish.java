@@ -2,6 +2,7 @@ package BotTask;
 
 import java.util.ArrayList;
 
+import BotAI.EquipmentManager;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.dialogues.Dialogues;
@@ -16,32 +17,33 @@ import Task.Task;
 import org.dreambot.api.wrappers.widgets.message.Message;
 //TODO Reconfigure getFishingSpot to no throw error
 
-public class Fishing implements Task, ChatListener {
+public class Fish implements Task, ChatListener {
 	private NPC fishingSpot;
 	private String fishinSpotName;
 	private String fishingMethod;
 	private ArrayList<String> depositItems = new ArrayList<>();
+
 	private ArrayList<String> fishingEquipment = new ArrayList<>();
 	private Area botArea;
 	private boolean firstrun = true;
 
-	public Fishing() { }
+	public Fish() { }
 
-	public Fishing(BotLocations.Fishing info) {
+	public Fish(BotLocations.Fishing info) {
 		this.fishingMethod = info.getInteract();
+
+
 		for(String s : info.getDepositItems()) {
-			depositItems.add(s);
+			this.depositItems.add(s);
 		}
 		
 		for(String s: info.getEquipment()) {
-			fishingEquipment.add(s);
+			this.fishingEquipment.add(s);
+			equipmentManager.add(s);
 		}
-		
-		this.botArea = info.getArea();
-		
-		this.fishinSpotName = info.getName();
 
-		equipmentManager.add(info.getEquipment());
+		this.botArea = info.getArea();
+		this.fishinSpotName = info.getName();
 	}
 	
 	
@@ -112,6 +114,14 @@ public class Fishing implements Task, ChatListener {
 		if (message.getMessage().contains("You catch some")) {
 			levelManager.increaseActionCount();
 		}
+	}
+
+	public ArrayList<String> getFishingEquipment() {
+		return fishingEquipment;
+	}
+
+	public void setFishingEquipment(ArrayList<String> fishingEquipment) {
+		this.fishingEquipment = fishingEquipment;
 	}
 	
 

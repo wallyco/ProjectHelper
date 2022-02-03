@@ -103,7 +103,9 @@ public class Slayer implements Task{
 	        npc = NPCs.closest(n ->
 	            n.getName().equals(this.npcName) 
 	            && n != null 
-	            && !n.isInCombat());
+	            && !n.isInCombat()
+				&& n.canReach());
+
 	        MethodProvider.sleep(50);
 	        this.npc = npc;
 	        

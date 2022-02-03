@@ -16,7 +16,9 @@ public enum Lumbridge implements Locations{//npc name, interactions1, string for
 	SWAMPS_SKILLING(3241, 3168, 0, 0),
 	GOBLIN_BARN(3146, 3303, 0, 10),
 	COWS_SMALLFIELD(3199, 3289, 0, 15),
-	CHICKEN_LARGEFIELD(3178, 3293, 0, 0);
+	CHICKEN_LARGEFIELD(3178, 3293, 0, 0),
+	DRAYNOR_VILLAGE(3084, 3240,0, 15),
+	COWS_LARGEFIELD(3177, 3325, 0, 10);
 	
 	
 	Lumbridge(int tile1, int tile2, int zaxis, int combatLevel) {

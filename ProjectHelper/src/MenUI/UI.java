@@ -4,17 +4,14 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 
+import BotLocations.*;
+import BotTask.Fish;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.script.ScriptManager;
 
 import BotAI.FatigueManager;
 import BotAI.LevelManager;
-import BotLocations.Fishing;
-import BotLocations.Locations;
-import BotLocations.Skilling;
-import BotLocations.WoodCutting;
 import BotMain.Main;
-import BotTask.Slayer;
 import Task.Task;
 import Task.TaskManager;
 
@@ -23,7 +20,6 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
@@ -46,6 +42,9 @@ public class UI{
 	public static JTextPane textLog = new JTextPane();
 	private JRadioButton rdbtnAttachAttack;
 	private JRadioButton rdbtnAttachDeforester;
+	private JRadioButton rdbtnAttachFishing;
+	private JRadioButton rdbtnAttachSlayer;
+
 
 	private JTextField textTreeName;
 	private JTextField textSetAttackLevel;
@@ -174,9 +173,10 @@ public class UI{
 		comboBoxSlayerTask.setBounds(265, 26, 174, 22);
 		panelAttack.add(comboBoxSlayerTask);
 		
-		comboBoxSlayerTask.addItem(BotLocations.Combat.LUMBRIDGE_GOBLIN_BARN);
-		comboBoxSlayerTask.addItem(BotLocations.Combat.LUMBRIDGE_COW_SMALLFIELD);
-		comboBoxSlayerTask.addItem(BotLocations.Combat.LUMBRIDGE_CHICKEN_LARGEFIELD);
+		comboBoxSlayerTask.addItem(Combat.LUMBRIDGE_GOBLIN_BARN);
+		comboBoxSlayerTask.addItem(Combat.LUMBRIDGE_COW_SMALLFIELD);
+		comboBoxSlayerTask.addItem(Combat.LUMBRIDGE_CHICKEN_LARGEFIELD);
+		comboBoxSlayerTask.addItem(Combat.LUMBRIDGE_COW_LARGEFIELD);
 
 
 		
@@ -225,7 +225,7 @@ public class UI{
 		comboBoxWoodcuttingLocations.setBounds(301, 27, 172, 22);
 		panelDeforester.add(comboBoxWoodcuttingLocations);
 		
-		comboBoxWoodcuttingLocations.addItem(BotLocations.WoodCutting.VARROCK_EAST_TREE);
+		comboBoxWoodcuttingLocations.addItem(WoodCutting.VARROCK_EAST_TREE);
 		
 		rdbtnAttachDeforester.addActionListener(new ActionListener() {
 			
@@ -268,22 +268,20 @@ public class UI{
 		panelFishing.add(comboBoxFishingLocation);
 		
 		
-		comboBoxFishingLocation.addItem(BotLocations.Fishing.LUMBRIDGE_SWAMPS_NET);
-		comboBoxFishingLocation.addItem(BotLocations.Fishing.LUMBRIDGE_SWAMPS_BAIT);
+		comboBoxFishingLocation.addItem(Fishing.LUMBRIDGE_SWAMPS_NET);
+		comboBoxFishingLocation.addItem(Fishing.LUMBRIDGE_SWAMPS_BAIT);
+		comboBoxFishingLocation.addItem(Fishing.DRAYNOR_VILLAGE_SMALLNET);
+		comboBoxFishingLocation.addItem(Fishing.DRAYNOR_VILLAGE_BAIT);
 
-
-		
 		rdbtnAttachFishing.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				botLocation = (Fishing) comboBoxFishingLocation.getSelectedItem();
-				if(rdbtnAttachFishing.isSelected()) {
-					taskManager.add(new BotTask.Fishing((Fishing) botLocation));
-					 
+				if (rdbtnAttachFishing.isSelected()) {
+					taskManager.add(new Fish((Fishing) botLocation));
 				}
 			}
-			
 		});
 		
 		/////////////////
@@ -389,6 +387,8 @@ public class UI{
 	public void deselectRDBTN() {
 		rdbtnAttachAttack.setSelected(false);
 		rdbtnAttachDeforester.setSelected(false);
+		rdbtnAttachFishing.setSelected(false);
+		rdbtnAttachSlayer.setSelected(false);
 	}
 	public JFrame getFrame() {
 		return frame;
