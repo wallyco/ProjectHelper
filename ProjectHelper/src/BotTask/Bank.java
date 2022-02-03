@@ -48,6 +48,18 @@ public class Bank implements Task {
 			}
 		}
 	}
+
+	public Bank(boolean method, ArrayList<String> list, boolean depositAllInventory) {
+		this(method);
+		if(!method){
+			for(String s : list) {
+				this.listOfItemsToWithdraw.add(s);
+			}
+		}
+	}
+	public Bank(boolean method, boolean depositAllInventory){
+		this.bankingMethod = method;
+	}
 	
 	public Bank(String[] name) {
 		for(String e: name) {
@@ -98,18 +110,17 @@ public class Bank implements Task {
 				Main.ai.getTaskManager().insertBehindHead(new BotTask.Walk(returnTile.getArea(5)));
 				return false;
 			}
-
 		}
 
 		return false;
 	}
 	
-	public boolean depositAll() {
+	private boolean depositAll() {
 		if(Inventory.contains(getListOfItemsToDeposit().get(0))) {
 			if(bankTile.getArea(10).contains(player) && !org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
 				MethodProvider.sleepUntil(() -> org.dreambot.api.methods.container.impl.bank.Bank.open(), 500);
 			}else if(org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
-				this.listOfItemsToDeposit.stream().forEach(e -> {
+				listOfItemsToDeposit.stream().forEach(e -> {
 					MethodProvider.sleepUntil(() -> org.dreambot.api.methods.container.impl.bank.Bank.depositAll(e), 200);
 				});
 				return true;
@@ -120,7 +131,7 @@ public class Bank implements Task {
 		return false;
 	}
 	
-	public boolean withdrawAll() {
+	private boolean withdrawAll() {
 		if(!Inventory.contains(getListOfItemsToWithdraw().get(0))) {
 			if(bankTile.getArea(10).contains(player) && !org.dreambot.api.methods.container.impl.bank.Bank.isOpen()) {
 				MethodProvider.sleepUntil(() -> org.dreambot.api.methods.container.impl.bank.Bank.open(), 500);

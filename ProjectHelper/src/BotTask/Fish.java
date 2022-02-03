@@ -77,10 +77,6 @@ public class Fish implements Task, ChatListener {
 		if(Dialogues.canContinue())
 			Dialogues.continueDialogue();
 
-		if(!equipmentManager.manageEquipment()){
-			return false;
-		};
-		
 		if(Inventory.isFull()) {
 			Main.ai.getTaskManager().insertAtHeadCopy(new Bank(depositItems));
 			return false;
@@ -111,7 +107,7 @@ public class Fish implements Task, ChatListener {
 
 	@Override
 	public void onMessage(Message message) {
-		if (message.getMessage().contains("You catch some")) {
+		if (message.getMessage().contains("You catch")) {
 			levelManager.increaseActionCount();
 		}
 	}

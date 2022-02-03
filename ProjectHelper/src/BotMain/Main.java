@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import BotTask.Fish;
 import org.dreambot.api.methods.MethodProvider;
+import org.dreambot.api.randoms.RandomEvent;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManager;
@@ -30,7 +31,7 @@ implements ChatListener {
 		//TODO MOVE THEM TO LEVELMANAGER
 		ScriptManager.getScriptManager().addListener(new Deforester());
 		ScriptManager.getScriptManager().addListener(new Fish());
-
+		ScriptManager.getScriptManager().getCurrentScript().getRandomManager().disableSolver(RandomEvent.DISMISS);
 		timeBegan = System.currentTimeMillis();
 		MethodProvider.log("Loading gui");
 		EventQueue.invokeLater(new Runnable() {

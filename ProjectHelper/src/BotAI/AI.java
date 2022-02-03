@@ -5,7 +5,7 @@ import Task.Task;
 import Task.TaskManager;
 
 public class AI {
-	private TaskManager<Task> taskManager = new TaskManager<>();
+	private TaskManager<Task> taskManager = new TaskManager<Task>();
 	private HealthManager healthManager = new HealthManager(true);
 	private LevelManager levelManager = new LevelManager();
 	private EquipmentManager equipmentManager = new EquipmentManager();

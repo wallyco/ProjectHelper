@@ -9,6 +9,8 @@ import org.dreambot.api.methods.interactive.Players;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class EquipmentManager {
 
@@ -29,12 +31,9 @@ public class EquipmentManager {
 
     public boolean manageEquipment(){
         checkEquipment();
-
-
         if(getEquipmentSet().containsValue(false)) {
-            MethodProvider.log("calling bank");
             Main.ai.getTaskManager().insertAtHeadCopy
-                    (new BotTask.Bank(false, getEquipmentSetList()));
+                    (new BotTask.Bank(false, getEquipmentSetList(), true));
             return false;
         }
         return true;
@@ -45,7 +44,6 @@ public class EquipmentManager {
             if(Inventory.contains(k)
             || Equipment.contains(k)){
                 equipmentSet.replace(k, true);
-                MethodProvider.log("is true");
                 equipmentSetList.remove(k);
             }
         });
@@ -71,6 +69,14 @@ public class EquipmentManager {
     public void add(String s){
         equipmentSet.put(s, false);
         equipmentSetList.add(s);
+    }
+
+    public boolean resetInventory() {
+        checkEquipment();
+        if(Inventory.contains(item -> !item.getName().equals(equipmentSetList.get(0)))){
+            return true;
+        }
+        return false;
     }
 
     public ArrayList<String> getEquipmentSetList() {
