@@ -1,14 +1,11 @@
-package BotTask;
+package BotTask.JPXBank;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Stream;
 
+import BotTask.UTIL.Walk;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.Players;
-import org.dreambot.api.methods.item.GroundItems;
 import org.dreambot.api.methods.map.Tile;
 
 import BotMain.Main;
@@ -102,12 +99,12 @@ public class Bank implements Task {
 			return true;
 		}else if(bankingMethod) {
 			if(depositAll()) {
-				Main.ai.getTaskManager().insertBehindHead(new BotTask.Walk(returnTile.getArea(5)));
+				Main.ai.getTaskManager().insertBehindHead(new Walk(returnTile.getArea(5)));
 				return false;
 			}
 		}else {
 			if(withdrawAll()) {;
-				Main.ai.getTaskManager().insertBehindHead(new BotTask.Walk(returnTile.getArea(5)));
+				Main.ai.getTaskManager().insertBehindHead(new Walk(returnTile.getArea(5)));
 				return false;
 			}
 		}

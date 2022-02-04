@@ -1,4 +1,4 @@
-package BotTask;
+package BotTask.UTIL;
 
 import java.util.Objects;
 

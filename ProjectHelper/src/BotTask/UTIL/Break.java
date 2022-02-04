@@ -1,4 +1,4 @@
-package BotTask;
+package BotTask.UTIL;
 
 import org.dreambot.api.utilities.Timer;
 import org.dreambot.api.randoms.RandomEvent;

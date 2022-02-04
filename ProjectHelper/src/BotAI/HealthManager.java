@@ -1,11 +1,15 @@
 package BotAI;
 
+import BotMain.Main;
+import BotTask.JPXBank.SimpleWithdraw;
+import BotTask.UTIL.Walk;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.methods.tabs.Tabs;
+import org.dreambot.api.methods.walking.impl.Walking;
 
 public class HealthManager {
 	private boolean shouldRun = Inventory.isEmpty() || Inventory.contains(item -> item != null && !item.hasAction("Eat"));
@@ -27,7 +31,11 @@ public class HealthManager {
 		generateIntToEat();
 		checkShouldRun();
 		if(shouldRun && getHitpoints() <= thresholdToRun && foodIsRequired && !isInsertCalled && Players.localPlayer().isInCombat()) {
-			BotMain.Main.ai.getTaskManager().insertAtHeadDelete(new BotTask.Walk(BankLocation.GRAND_EXCHANGE.getArea(5)));
+			if(!Walking.isRunEnabled()){
+				Walking.toggleRun();
+			}
+			BotMain.Main.ai.getTaskManager().insertAtHeadCopy(new Walk(BankLocation.GRAND_EXCHANGE.getArea(5)));
+			Main.ai.getTaskManager().insertBehindHead(new SimpleWithdraw("Salmon", 14));
 			isInsertCalled = true;
 			return false;
 		}else if(getHitpoints() <= thresholdToEat) {

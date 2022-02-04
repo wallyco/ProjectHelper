@@ -11,11 +11,13 @@ public class AI {
 	private EquipmentManager equipmentManager = new EquipmentManager();
 
 	//Handle values in constructors and overload AI constructor
+	//Manager enums
 	public AI() {}
 	
 	public void act() {
 		healthManager.isHealthOk();
 		FatigueManager.getInstance().checkEnergyLevel();
+		equipmentManager.manageEquipment();
 		getTaskManager().perform();
 	}
 

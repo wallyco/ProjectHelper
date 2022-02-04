@@ -1,8 +1,11 @@
-package BotTask;
+package BotTask.Skilling;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
+import BotTask.JPXBank.Bank;
+import BotTask.JPXBank.SkillingDeposit;
+import BotTask.UTIL.Walk;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.dialogues.Dialogues;
@@ -41,14 +44,17 @@ public class Deforester implements Task, ChatListener{
 		this.area = info.getArea();
 		
 	}
+
+	//TODO Equipment manager causes a negatively conflicts with these methods
 	@Override
 	public boolean execute() {
 		if(firstrun) {
 			levelManager.resetActionCount(136);
 			firstrun = false;
-		}
-		if(accept()) {
-			woodcut();
+		}else {
+			if (accept()) {
+				woodcut();
+			}
 		}
 		return levelManager.continueLevelingWoodcutting();
 	}
@@ -76,7 +82,7 @@ public class Deforester implements Task, ChatListener{
 		}
 		
 		if(Inventory.isFull()) {
-			Main.ai.getTaskManager().insertAtHeadCopy(new Bank(depositItems));
+			Main.ai.getTaskManager().insertAtHeadCopy(new SkillingDeposit(depositItems));
 			return false;
 		}
 		

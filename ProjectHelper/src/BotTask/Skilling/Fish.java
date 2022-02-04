@@ -1,8 +1,9 @@
-package BotTask;
+package BotTask.Skilling;
 
 import java.util.ArrayList;
 
-import BotAI.EquipmentManager;
+import BotTask.JPXBank.SkillingDeposit;
+import BotTask.UTIL.Walk;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.dialogues.Dialogues;
@@ -19,7 +20,7 @@ import org.dreambot.api.wrappers.widgets.message.Message;
 
 public class Fish implements Task, ChatListener {
 	private NPC fishingSpot;
-	private String fishinSpotName;
+	private String fishingSpotName;
 	private String fishingMethod;
 	private ArrayList<String> depositItems = new ArrayList<>();
 
@@ -32,18 +33,17 @@ public class Fish implements Task, ChatListener {
 	public Fish(BotLocations.Fishing info) {
 		this.fishingMethod = info.getInteract();
 
-
 		for(String s : info.getDepositItems()) {
 			this.depositItems.add(s);
 		}
 		
 		for(String s: info.getEquipment()) {
 			this.fishingEquipment.add(s);
-			equipmentManager.add(s);
 		}
 
+
 		this.botArea = info.getArea();
-		this.fishinSpotName = info.getName();
+		this.fishingSpotName = info.getName();
 	}
 	
 	
@@ -51,10 +51,15 @@ public class Fish implements Task, ChatListener {
 	public boolean execute() {
 		if(firstrun) {
 			levelManager.resetActionCount(116);
+			equipmentManager.add(fishingEquipment);
 			firstrun = false;
-		}
-		if(shouldFish()) {
-			fish();
+		}else {
+			if (!levelManager.continueLevelingGeneral()) {
+				return false;
+			}
+			if (shouldFish()) {
+				fish();
+			}
 		}
 		return true;
 	}
@@ -66,19 +71,19 @@ public class Fish implements Task, ChatListener {
 	}
 	
 	private boolean fish() {
+
 		getFishingSpot();
 		if(fishingSpot.interact(fishingMethod))
 			FatigueManager.getInstance().consumeEnergy(fatigueRate());
 		return true;
 	}
-	
-	
+
 	private boolean shouldFish() {
 		if(Dialogues.canContinue())
 			Dialogues.continueDialogue();
 
 		if(Inventory.isFull()) {
-			Main.ai.getTaskManager().insertAtHeadCopy(new Bank(depositItems));
+			Main.ai.getTaskManager().insertAtHeadCopy(new SkillingDeposit(depositItems));
 			return false;
 		}
 		
@@ -99,7 +104,7 @@ public class Fish implements Task, ChatListener {
 	}
 	
 	private void getFishingSpot() {
-		fishingSpot = NPCs.closest(fishinSpotName);
+		fishingSpot = NPCs.closest(fishingSpotName);
 		if(fishingSpot == null) {
 			Main.ai.getTaskManager().insertAtHeadCopy(new Walk(botArea));
 		}

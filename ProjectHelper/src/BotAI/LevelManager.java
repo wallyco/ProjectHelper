@@ -70,7 +70,10 @@ public class LevelManager {
 	public boolean continueLevelingWoodcutting() {
 		return (getNumberOfActions() < getNumberOfActionsToObtain());
 	}
-	
+
+	public boolean continueLevelingGeneral(){
+		return (getNumberOfActions() < getNumberOfActionsToObtain());
+	}
 	public void increaseActionCount() {
 		numberOfActions += 1;
 	}

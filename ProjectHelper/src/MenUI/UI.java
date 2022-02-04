@@ -4,8 +4,12 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 
+import BotAI.EquipmentManager;
 import BotLocations.*;
-import BotTask.Fish;
+import BotTask.Combat.Attack;
+import BotTask.Combat.Slayer;
+import BotTask.Skilling.Fish;
+import BotTask.Skilling.Deforester;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.script.ScriptManager;
 
@@ -38,6 +42,7 @@ public class UI{
 	private JTextField textNPCName;
     static TaskManager<Task> taskManager = Main.ai.getTaskManager();
     private LevelManager levelManager = Main.ai.getLevelManager();
+	private EquipmentManager equipmentManager = Main.ai.getEquipmentManager();
     private Locations botLocation;
 	public static JTextPane textLog = new JTextPane();
 	private JRadioButton rdbtnAttachAttack;
@@ -188,7 +193,7 @@ public class UI{
 				botLocation = (Locations) comboBoxSlayerTask.getSelectedItem();
 				
 				if(rdbtnAttachSlayer.isSelected()) {
-					taskManager.add(new BotTask.Slayer((BotLocations.Combat) botLocation)); 
+					taskManager.add(new Slayer((BotLocations.Combat) botLocation));
 
 				}
 			}
@@ -199,7 +204,7 @@ public class UI{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(rdbtnAttachAttack.isSelected()) {
-					taskManager.add(new BotTask.Attack(textNPCName.getText().trim())); 
+					taskManager.add(new Attack(textNPCName.getText().trim()));
 
 				}
 			}
@@ -234,7 +239,7 @@ public class UI{
 				botLocation = (Locations) comboBoxWoodcuttingLocations.getSelectedItem();
 
 				if(rdbtnAttachDeforester.isSelected()) {
-					taskManager.add(new BotTask.Deforester((WoodCutting) botLocation)); 
+					taskManager.add(new Deforester((WoodCutting) botLocation));
 				}
 			}
 			
@@ -305,6 +310,7 @@ public class UI{
 		btnReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				taskManager.clear();
+				equipmentManager.clear();
 				deselectRDBTN();
 				updateLog();
 			}

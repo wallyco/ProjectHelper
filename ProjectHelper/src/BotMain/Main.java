@@ -4,7 +4,7 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.util.concurrent.TimeUnit;
 
-import BotTask.Fish;
+import BotTask.Skilling.Fish;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.randoms.RandomEvent;
 import org.dreambot.api.script.AbstractScript;
@@ -15,7 +15,7 @@ import org.dreambot.api.script.listener.ChatListener;
 
 import BotAI.AI;
 import BotAI.FatigueManager;
-import BotTask.Deforester;
+import BotTask.Skilling.Deforester;
 import MenUI.UI;
 
 @ScriptManifest(author = "JPX", category = Category.UTILITY, name = "ProjectHelper", version = 0.1)

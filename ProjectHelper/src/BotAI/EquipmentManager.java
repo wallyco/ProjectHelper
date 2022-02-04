@@ -1,22 +1,19 @@
 package BotAI;
 
 import BotMain.Main;
+import BotTask.JPXBank.Bank;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.equipment.Equipment;
-import org.dreambot.api.methods.interactive.Players;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public class EquipmentManager {
 
     //TRUE == EQUIPPED FALSE == CALL TASK TO EQUIP
     private HashMap<String, Boolean> equipmentSet = new HashMap<>();
-
+    private HashMap<String, Integer> equipmentLevel = new HashMap<>();
     private ArrayList<String> equipmentSetList = new ArrayList<>();
 
     public EquipmentManager(){ }
@@ -33,8 +30,8 @@ public class EquipmentManager {
         checkEquipment();
         if(getEquipmentSet().containsValue(false)) {
             Main.ai.getTaskManager().insertAtHeadCopy
-                    (new BotTask.Bank(false, getEquipmentSetList(), true));
-            return false;
+                    (new BotTask.JPXBank.EquipmentBanking(equipmentSetList, false));
+            return true;
         }
         return true;
     }
@@ -50,6 +47,7 @@ public class EquipmentManager {
     }
 
     public void add(ArrayList<String> obj){
+        equipmentSet.clear();
         for(String s : obj){
             equipmentSet.put(s, false);
             equipmentSetList.add(s);
@@ -61,8 +59,8 @@ public class EquipmentManager {
         for(String s: obj){
             equipmentSet.put(s, false);
             equipmentSetList.add(s);
-            MethodProvider.log(getEquipmentSet().toString());
-            MethodProvider.log(getEquipmentSet().values());
+            MethodProvider.log(getEquipmentSet().toString() + " equipmentmanager add");
+            MethodProvider.log(getEquipmentSet().values() + " equipmentmanager add");
         }
     }
 
@@ -71,12 +69,9 @@ public class EquipmentManager {
         equipmentSetList.add(s);
     }
 
-    public boolean resetInventory() {
-        checkEquipment();
-        if(Inventory.contains(item -> !item.getName().equals(equipmentSetList.get(0)))){
-            return true;
-        }
-        return false;
+    public void clear(){
+        equipmentSetList.clear();
+        equipmentSet.clear();
     }
 
     public ArrayList<String> getEquipmentSetList() {
@@ -95,6 +90,13 @@ public class EquipmentManager {
         this.equipmentSet = equipmentSet;
     }
 
+    public HashMap<String, Integer> getEquipmentLevel() {
+        return equipmentLevel;
+    }
+
+    public void setEquipmentLevel(HashMap<String, Integer> equipmentLevel) {
+        this.equipmentLevel = equipmentLevel;
+    }
     @Override
     public String toString() {
         return "EquipmentManager{" +
@@ -102,4 +104,6 @@ public class EquipmentManager {
                 ", equipmentSetList=" + equipmentSetList +
                 '}';
     }
+
+
 }

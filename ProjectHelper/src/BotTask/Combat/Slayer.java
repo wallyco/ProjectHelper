@@ -1,7 +1,8 @@
-package BotTask;
+package BotTask.Combat;
 
 import java.util.Objects;
 
+import BotTask.UTIL.Walk;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.dialogues.Dialogues;
 import org.dreambot.api.methods.interactive.NPCs;
@@ -47,15 +48,16 @@ public class Slayer implements Task{
 		if(firstrun) {
 			levelManager.resetActionCount(25);
 			firstrun = false;
+		}else {
+			if (!levelManager.continueSlaying()) {
+				return false;
+			}
+
+			if (shouldAttack()
+					&& attack()) {
+				fatigueManager.consumeEnergy(fatigueRate());
+			}
 		}
-		if(!levelManager.continueSlaying()) {
-			return false;
-		}
-		
-		if(shouldAttack()
-	            && attack()) {
-			fatigueManager.consumeEnergy(fatigueRate());
-	    }
 		
 		return true;
 	}
@@ -91,15 +93,14 @@ public class Slayer implements Task{
         }
         return false;
     }
-	
 
-	
-	
     public void setNPC(NPC npc) {
+		npc = null;
     	if(player.isInteractedWith()) {
-        	npc = NPCs.closest(e -> e.isInteracting(player));
-        	this.npc = npc;
-    	}else {
+			npc = NPCs.closest(e -> e.isInteracting(player) && e.getName().equals(this.npcName));
+			this.npc = npc;
+		}
+    	if(npc == null || this.npc == null){
 	        npc = NPCs.closest(n ->
 	            n.getName().equals(this.npcName) 
 	            && n != null 
