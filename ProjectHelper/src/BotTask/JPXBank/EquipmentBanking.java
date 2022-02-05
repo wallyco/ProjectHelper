@@ -6,8 +6,12 @@ import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.map.Tile;
+import org.dreambot.api.wrappers.cache.nodes.ItemNode;
+import org.dreambot.api.wrappers.items.Item;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -23,7 +27,7 @@ public class EquipmentBanking implements Task {
         this.equipItems = equipItems;
     }
 
-    public EquipmentBanking(ArrayList<String> list, boolean equipItems) {
+    public EquipmentBanking(HashSet<String> list, boolean equipItems) {
         this(equipItems);
         for(String s : list) {
             this.listOfItemsToWithdraw.add(s);
@@ -38,22 +42,28 @@ public class EquipmentBanking implements Task {
         }
     }
 
-
     @Override
     public boolean execute() {
         if(Inventory.containsAll(listOfItemsToWithdraw)){
             if(equipItems){
-                Stream.of(Inventory.all()).forEach(inv -> {
-                    inv.forEach(item -> {
-                        if(item.hasAction("Equip")){
-                            item.interact("Equip");
-                        }
-                    });
+                Inventory.all().forEach(i -> {
+                    if(i != null && i.hasAction("Wield")){
+                        i.interact("Wield");
+                        MethodProvider.sleep(100);
+                    }
                 });
             }
             return false;
         }
 
+        for (String s : listOfItemsToWithdraw) {
+            if(Bank.contains(s)){
+                MethodProvider.log("true");
+            }else {
+                return false;
+            }
+
+        }
         withdrawAll();
         return true;
     }
@@ -71,11 +81,16 @@ public class EquipmentBanking implements Task {
             return true;
         }
         if (Bank.isOpen()) {
-            MethodProvider.sleepUntil(() -> Bank.depositAllItems(), 200);
+            MethodProvider.sleepUntil(() -> Bank.depositAllItems(), 500);
 
             listOfItemsToWithdraw.forEach(e -> {
-                Bank.withdrawAll(e);
-                //TODO IF BANK DOES NOT CONTAIN ITEM
+                if(Bank.contains(e)) {
+                    MethodProvider.sleepUntil(() -> Bank.withdrawAll(e), 250);
+                    MethodProvider.sleepUntil(()-> Inventory.contains(e), 500);
+                }else {
+                    //TODO IF BANK DOES NOT CONTAIN ITEM
+                    MethodProvider.log("equipment banking: Bank does not contain item: " + e);
+                }
             });
         }
         return true;

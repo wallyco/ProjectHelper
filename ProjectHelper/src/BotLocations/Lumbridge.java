@@ -23,18 +23,18 @@ public enum Lumbridge implements Locations{//npc name, interactions1, string for
 	
 	Lumbridge(int tile1, int tile2, int zaxis, int combatLevel) {
 		this.botArea = new Tile(tile1, tile2, zaxis).getArea(5);
-		this.RequiredCombatLevel = combatLevel;
+		this.requiredCombatLevel = combatLevel;
 	}
 	
 	private Area botArea;
-	private int RequiredCombatLevel;
-	
+	private int requiredCombatLevel;
+
 	public Area getArea() {
 		return botArea;
 	}
 
 	public int getRequiredCombatLevel() {
-		return RequiredCombatLevel;
+		return requiredCombatLevel;
 	}
 
 

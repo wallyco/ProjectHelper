@@ -5,6 +5,7 @@ import java.util.Random;
 import org.dreambot.api.methods.MethodProvider;
 
 import BotMain.Main;
+import org.dreambot.api.methods.walking.impl.Walking;
 
 //TODO MAJOR BUG -- If a break gets reset mid run acceptBreak stays false
 public class FatigueManager { 
@@ -21,6 +22,7 @@ public class FatigueManager {
 	public int shortBreakRecharge = 0;
 	public boolean acceptBreak = true;
 	private int loopCounter = 0;
+	private int shouldSwitchFatigueLevel = 50;
 	//SAVE 1000000 is ~10-30 mins
 	//SAVE 10000000 is ~1-3 hours
 	private Random dom = new Random();
@@ -56,9 +58,16 @@ public class FatigueManager {
 		if(Main.ai.getTaskManager().isEmpty()) {
 			this.acceptBreak = true;
 		}
+
+		if(loopCounter == 30){
+			generateRunThreshold();
+			if(Walking.getRunEnergy() >= Walking.getRunThreshold() && !Walking.isRunEnabled()){
+				Walking.toggleRun();
+			}
+		}
 		
 		if(shouldSwitchInputTiming()  &&
-				getEnergy() < 50) {
+				getEnergy() < shouldSwitchFatigueLevel) {
 			setFatigueState(FatigueStates.TIRED);
 			generateBreakDouble();
 			setEnergy(getEnergy() + shortBreakRecharge);
@@ -66,6 +75,8 @@ public class FatigueManager {
 			setFatigueState(FatigueStates.ENGAGED);
 
 		}
+
+		loopCounter++;
 		
 	}
 		//TODO Maybe to easy to detect
@@ -94,6 +105,12 @@ public class FatigueManager {
 //			loopCounter++;
 //		}
 //	}
+
+	private void generateRunThreshold(){
+		Walking.setRunThreshold(generateRandomInputInt(90));
+		MethodProvider.log(Walking.getRunThreshold());
+		loopCounter = 0;
+	}
 	
 	public boolean shouldSwitchInputTiming() {
 		double d = dom.nextDouble();
@@ -104,7 +121,7 @@ public class FatigueManager {
 	}
 	
 	private int generateRandomInputInt(int offset) {
-		return (int) (Math.random() * offset);
+		return (int) ((Math.random() * offset) + 10);
 	}
 	
 	private double generateResetBreakDouble() {

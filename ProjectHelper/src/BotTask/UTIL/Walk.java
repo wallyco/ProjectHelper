@@ -2,13 +2,16 @@ package BotTask.UTIL;
 
 import java.util.Objects;
 
+import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.methods.interactive.Players;
 import org.dreambot.api.methods.map.Area;
+import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.walking.impl.Walking;
 
 import BotAI.FatigueManager;
 import BotAI.FatigueStates;
 import Task.Task;
+import org.dreambot.api.methods.walking.pathfinding.impl.obstacle.PathObstacle;
 
 public class Walk implements Task {
 	private int error = 0;
@@ -34,6 +37,8 @@ public class Walk implements Task {
 			Walking.walk(area);
 			FatigueManager.getInstance().consumeEnergy(fatigueRate());
 			return true;
+		}else if( area == null){
+			MethodProvider.log("Area is null - UTIL.Walk");
 		}
 
 		return false;

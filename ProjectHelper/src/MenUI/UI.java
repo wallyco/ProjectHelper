@@ -10,6 +10,8 @@ import BotTask.Combat.Attack;
 import BotTask.Combat.Slayer;
 import BotTask.Skilling.Fish;
 import BotTask.Skilling.Deforester;
+import BotTask.Skilling.RangeMaster;
+import BotTask.UTIL.Exit;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.script.ScriptManager;
 
@@ -182,9 +184,9 @@ public class UI{
 		comboBoxSlayerTask.addItem(Combat.LUMBRIDGE_COW_SMALLFIELD);
 		comboBoxSlayerTask.addItem(Combat.LUMBRIDGE_CHICKEN_LARGEFIELD);
 		comboBoxSlayerTask.addItem(Combat.LUMBRIDGE_COW_LARGEFIELD);
+		comboBoxSlayerTask.addItem(Combat.BARBARIANVILLAGE_BARBARIAN);
+		comboBoxSlayerTask.addItem(Combat.MONASTERY_MONK);
 
-
-		
 		rdbtnAttachSlayer.addActionListener(new ActionListener() {
 			
 			
@@ -231,12 +233,14 @@ public class UI{
 		panelDeforester.add(comboBoxWoodcuttingLocations);
 		
 		comboBoxWoodcuttingLocations.addItem(WoodCutting.VARROCK_EAST_TREE);
-		
+		comboBoxWoodcuttingLocations.addItem(WoodCutting.VARROCK_NORTH_TREE);
+
+
 		rdbtnAttachDeforester.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				botLocation = (Locations) comboBoxWoodcuttingLocations.getSelectedItem();
+				botLocation = (WoodCutting) comboBoxWoodcuttingLocations.getSelectedItem();
 
 				if(rdbtnAttachDeforester.isSelected()) {
 					taskManager.add(new Deforester((WoodCutting) botLocation));
@@ -294,7 +298,33 @@ public class UI{
 		
 		JPanel panelDev = new JPanel();
 		tabbedPane.addTab("Dev Tab", null, panelDev, null);
-		
+		JRadioButton rdbtnExit = new JRadioButton("Attach Task {EXIT}");
+		rdbtnExit.setBounds(287, 57, 152, 23);
+		panelDev.add(rdbtnExit);
+
+		JRadioButton rdbtnCooking = new JRadioButton("Attach Task {Cooking}");
+		rdbtnCooking.setBounds(287, 67, 152, 23);
+		panelDev.add(rdbtnCooking);
+
+		rdbtnCooking.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (rdbtnCooking.isSelected()) {
+					taskManager.add(new RangeMaster(Cooking.VARROCK_JULIETHOUSE));
+				}
+			}
+		});
+
+		rdbtnExit.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (rdbtnExit.isSelected()) {
+					taskManager.add(new Exit());
+				}
+			}
+		});
 		
 		///////////////////////////////////////////////////////////
 		

@@ -3,6 +3,7 @@ package BotTask.Skilling;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import BotLocations.Skilling;
 import BotTask.JPXBank.Bank;
 import BotTask.JPXBank.SkillingDeposit;
 import BotTask.UTIL.Walk;
@@ -24,12 +25,13 @@ public class Deforester implements Task, ChatListener{
 //TODO Add consume
 	private GameObject tree;
 	private String treeName;
-	private Player player = Players.localPlayer();
 	private ArrayList<String> depositItems = new ArrayList<>();
+	private Skilling botLocation;
 	private Area area;
-	public Deforester() {}
 	private boolean firstrun = true;
-	
+
+	public Deforester() {}
+
 	public Deforester(String treeName, String depositItem) {
 		this.treeName = treeName;
 		depositItems.add(depositItem);
@@ -37,6 +39,7 @@ public class Deforester implements Task, ChatListener{
 	
 	public Deforester(BotLocations.WoodCutting info) {
 		this.treeName = info.getName();
+		this.botLocation = info;
 		for(String s: info.getDepositItems()) {
 			depositItems.add(s);
 		}
@@ -45,11 +48,12 @@ public class Deforester implements Task, ChatListener{
 		
 	}
 
-	//TODO Equipment manager causes a negatively conflicts with these methods
+	//TODO Equipment manager negatively conflicts with these methods
 	@Override
 	public boolean execute() {
 		if(firstrun) {
 			levelManager.resetActionCount(136);
+			equipmentManager.getWoodcuttingAxe(botLocation);
 			firstrun = false;
 		}else {
 			if (accept()) {
@@ -61,17 +65,13 @@ public class Deforester implements Task, ChatListener{
 
 	@Override
 	public double fatigueRate() {
-		return 1.0;
+		return .6;
 	}
 	
 	private boolean accept() {
 		if(Dialogues.canContinue())
 			Dialogues.continueDialogue();
-		
-		
-		if(tree == null) {
-			return true;
-		}
+
 		
 		if(player.isAnimating() 
 				|| player.isMoving()) {
@@ -85,7 +85,7 @@ public class Deforester implements Task, ChatListener{
 			Main.ai.getTaskManager().insertAtHeadCopy(new SkillingDeposit(depositItems));
 			return false;
 		}
-		
+
 		return true;
 	}
 	
@@ -97,9 +97,6 @@ public class Deforester implements Task, ChatListener{
 			MethodProvider.sleepUntil(() -> tree.getSurroundingArea(2).contains(player), 500);
 			MethodProvider.sleep(50);
 			fatigueManager.consumeEnergy(fatigueRate());
-			if(player.isStandingStill()) {
-				Main.ai.getTaskManager().insertAtHeadCopy(new Walk(area));
-			}
 			return true;
 		}
 		return false;
@@ -112,7 +109,8 @@ public class Deforester implements Task, ChatListener{
 	public void setTree(GameObject tree) {
 		tree = GameObjects.closest(t -> t != null 
 				&& t.getName().equals(treeName) 
-				&& player.canReach());
+				&& t.distance() < 10
+				&& t.canReach());
 		if(tree != null) {
 			this.tree = tree;
 		}else {

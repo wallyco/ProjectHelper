@@ -4,7 +4,9 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.util.concurrent.TimeUnit;
 
+import BotLocations.Cooking;
 import BotTask.Skilling.Fish;
+import BotTask.Skilling.RangeMaster;
 import org.dreambot.api.methods.MethodProvider;
 import org.dreambot.api.randoms.RandomEvent;
 import org.dreambot.api.script.AbstractScript;

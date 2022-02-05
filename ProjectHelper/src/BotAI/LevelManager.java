@@ -4,6 +4,8 @@ import java.util.Random;
 
 import org.dreambot.api.methods.combat.Combat;
 import org.dreambot.api.methods.combat.CombatStyle;
+import org.dreambot.api.methods.container.impl.Inventory;
+import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.skills.Skills;
 import org.dreambot.api.methods.tabs.Tab;
@@ -69,6 +71,15 @@ public class LevelManager {
 	
 	public boolean continueLevelingWoodcutting() {
 		return (getNumberOfActions() < getNumberOfActionsToObtain());
+	}
+
+	public boolean continueLevelingCooking(String[] cookingitems){
+		if(Bank.getBankHistoryCache() != null){
+			if(Bank.contains(cookingitems) || Inventory.contains(cookingitems)
+					&& getNumberOfActions() < getNumberOfActionsToObtain());
+			return true;
+		}
+		return false;
 	}
 
 	public boolean continueLevelingGeneral(){
@@ -188,6 +199,10 @@ public class LevelManager {
 
 	public void setNumberOfActionsToObtain(int numberOfActionsToObtain) {
 		this.numberOfActionsToObtain = numberOfActionsToObtain;
+	}
+
+	public void getWoodCuttingAxe(){
+		//getLevelWoodCut()
 	}
 
 	@Override
